@@ -78,7 +78,10 @@ export function PropertyCard({
         </div>
       </div>
 
-      <div className="relative z-10 p-6" style={{ transform: "translateZ(30px)" }}>
+      <div
+        className="relative z-10 p-6 pb-14"
+        style={{ transform: "translateZ(30px)" }}
+      >
         <h3 className="font-display text-2xl text-ivory-100 group-hover:text-gold-300 transition-colors">
           {property.name}
         </h3>
