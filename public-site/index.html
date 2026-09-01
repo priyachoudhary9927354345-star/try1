@@ -1,0 +1,1694 @@
+<meta charset="utf-8">
+<title>Aura Estates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #0a0a0d;
+    --surface: #15151a;
+    --surface-2: #1f1f26;
+    --surface-3: #2b2b33;
+    --line: #2a2a31;
+    --ink: #f4f0e6;
+    --ink-dim: #a9a599;
+    --ink-faint: #6f6c64;
+    --gold: #d4af6a;
+    --gold-light: #f0dfae;
+    --gold-dark: #a9823e;
+    --font-display: "Playfair Display", "Iowan Old Style", Georgia, serif;
+    --font-body: "Inter", -apple-system, "Segoe UI", sans-serif;
+    --shadow-lg: 0 30px 80px -20px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-weight: 300;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 600; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: inherit; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+  img, svg { display: block; max-width: 100%; }
+  ::selection { background: var(--gold); color: var(--bg); }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 1.75rem; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500;
+  }
+  .eyebrow::before { content: ""; width: 2.2rem; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dark)); }
+  .hairline { height: 1px; background: linear-gradient(90deg, transparent, rgba(212,175,106,0.4), transparent); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.95rem 1.9rem; border-radius: 999px;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color .25s ease, color .25s ease;
+    white-space: nowrap;
+  }
+  .btn-gold { background: var(--gold); color: #171308; box-shadow: 0 0 0 rgba(212,175,106,0); }
+  .btn-gold:hover { background: var(--gold-light); box-shadow: 0 10px 30px -8px rgba(212,175,106,0.55); transform: translateY(-1px); }
+  .btn-outline { background: transparent; border: 1px solid rgba(212,175,106,0.4); color: var(--ink); }
+  .btn-outline:hover { border-color: var(--gold); background: rgba(212,175,106,0.08); }
+  .btn-ghost { color: var(--ink-dim); padding: 0.6rem 0.2rem; }
+  .btn-ghost:hover { color: var(--gold); }
+
+  /* ---------- Nav ---------- */
+  header {
+    position: fixed; inset: 0 0 auto 0; z-index: 60;
+    padding: 1.4rem 0; transition: background 0.4s ease, padding 0.4s ease, border-color .4s ease;
+    border-bottom: 1px solid transparent;
+  }
+  header.scrolled { background: rgba(10,10,13,0.82); backdrop-filter: blur(16px); padding: 0.9rem 0; border-color: var(--line); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .brand { display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--font-display); font-size: 1.4rem; }
+  .brand small { font-family: var(--font-body); font-size: 0.6rem; letter-spacing: 0.35em; color: var(--gold); font-weight: 600; }
+  nav.links { display: flex; gap: 2.2rem; font-size: 0.86rem; color: rgba(244,240,230,0.78); }
+  nav.links a { position: relative; padding-bottom: 3px; transition: color .2s; }
+  nav.links a::after { content: ""; position: absolute; left: 0; bottom: 0; width: 0; height: 1px; background: var(--gold); transition: width .25s ease; }
+  nav.links a:hover { color: var(--gold-light); }
+  nav.links a:hover::after { width: 100%; }
+  .nav-actions { display: flex; align-items: center; gap: 1rem; }
+  .burger { display: none; }
+  @media (max-width: 860px) {
+    nav.links, .nav-actions .btn-outline { display: none; }
+    .burger { display: block; }
+  }
+  .nav-fav-btn { position: relative; color: var(--ink); padding: 0.3rem; transition: color .2s; }
+  .nav-fav-btn:hover { color: var(--gold-300, var(--gold)); }
+  .nav-fav-btn.has-items { color: var(--gold); }
+  .fav-badge {
+    position: absolute; top: -4px; right: -6px; min-width: 16px; height: 16px; padding: 0 3px;
+    border-radius: 999px; background: var(--gold); color: #171308; font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; min-height: 100svh; overflow: hidden;
+    display: flex; align-items: center;
+    background: linear-gradient(180deg, #11182a 0%, #241f30 34%, #6b4a3f 58%, #120e14 82%, #0a0a0d 100%);
+  }
+  .hero-stage {
+    position: absolute; inset: 0; perspective: 1600px; perspective-origin: 68% 46%;
+  }
+  .hero-scene {
+    position: absolute; top: 50%; left: 68%; transform-style: preserve-3d;
+    width: 1px; height: 1px;
+    transform: translate3d(0,0,0) rotateX(6deg) rotateY(-18deg);
+    will-change: transform;
+  }
+  /* twilight sky backdrop used behind the bigger, inspectable 3D viewports */
+  .viewport-sky { background: linear-gradient(180deg, #17213a 0%, #392f42 30%, #83594a 54%, #100e12 82%, #0d0d10 100%) !important; }
+  .cuboid { position: absolute; transform-style: preserve-3d; }
+  .cuboid .face { position: absolute; background: linear-gradient(155deg, var(--fc, #3a3a44), var(--fc2, #26262d)); border: 1px solid rgba(255,255,255,0.05); }
+  /* per-face brightness approximates a single key light from front-upper-right, the
+     single highest-impact trick for reading these as solid volumes instead of flat tiles */
+  .cuboid .face.front { filter: brightness(1.08); }
+  .cuboid .face.right { filter: brightness(0.86); }
+  .cuboid .face.left { filter: brightness(0.68); }
+  .cuboid .face.back { filter: brightness(0.55); }
+  .cuboid .face.top { background: linear-gradient(155deg, var(--fct, #45454f), var(--fc, #3a3a44)); filter: brightness(1.12); }
+  /* glassPlane() renders a single flat element carrying all three classes at
+     once (not a .cuboid ancestor with a .face.glass child), so this must be a
+     compound selector — JS sets the actual per-palette background inline,
+     this is the fallback/reference definition. */
+  .cuboid.face.glass {
+    background: linear-gradient(155deg, rgba(255,205,140,0.24), rgba(170,200,214,0.24) 55%, rgba(50,60,68,0.16));
+    border: 1px solid rgba(212,175,106,0.4);
+    backdrop-filter: blur(1px);
+    filter: none;
+  }
+  .gold-edge { position: absolute; background: linear-gradient(90deg, var(--gold-dark), var(--gold-light), var(--gold-dark)); box-shadow: 0 0 10px rgba(212,175,106,0.6); }
+  .ground-plate {
+    position: absolute; border-radius: 2px;
+    background: radial-gradient(closest-side, rgba(212,175,106,0.10), rgba(0,0,0,0) 70%);
+    filter: blur(6px);
+  }
+  .float-card {
+    position: absolute; border-radius: 10px; transform-style: preserve-3d;
+    background: linear-gradient(160deg, rgba(58,58,68,0.55), rgba(20,20,24,0.4));
+    border: 1px solid rgba(212,175,106,0.45);
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(3px);
+    animation: floaty 7s ease-in-out infinite;
+  }
+  @keyframes floaty { 0%,100% { transform: translateY(0) rotateZ(var(--rz,0deg)); } 50% { transform: translateY(-14px) rotateZ(var(--rz,0deg)); } }
+
+  .hero-copy { position: relative; z-index: 5; width: 100%; }
+  .hero-copy .wrap { max-width: 760px; }
+  .hero-copy .eyebrow { margin-bottom: 1.5rem; }
+  .hero-copy h1 { font-size: clamp(2.6rem, 6vw, 4.6rem); line-height: 1.04; letter-spacing: -0.01em; }
+  .hero-copy h1 em { font-style: italic; font-weight: 500; color: var(--gold-light);
+    background: linear-gradient(100deg, var(--gold-dark) 10%, var(--gold-light) 40%, var(--gold) 65%, var(--gold-dark) 90%);
+    background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-copy .lede { margin: 1.6rem 0 2.4rem; max-width: 34rem; font-size: 1.08rem; color: var(--ink-dim); line-height: 1.7; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 1.1rem; align-items: center; }
+  .scroll-hint {
+    position: absolute; bottom: 2.2rem; left: 50%; transform: translateX(-50%);
+    color: var(--ink-faint); animation: bob 2.2s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100% { transform: translate(-50%,0); } 50% { transform: translate(-50%,6px); } }
+  .hero-scrim {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: linear-gradient(0deg, var(--bg) 0%, rgba(10,10,13,0.15) 38%, rgba(10,10,13,0.55) 100%),
+                linear-gradient(90deg, rgba(10,10,13,0.86) 0%, rgba(10,10,13,0.35) 46%, transparent 72%);
+  }
+
+  @media (max-width: 760px) {
+    .hero-stage { display: none; }
+    .hero { background: linear-gradient(180deg, #11182a 0%, #241f30 30%, #6b4a3f 56%, #120e14 82%, #0a0a0d 100%); }
+    .hero-scrim { background: linear-gradient(0deg, var(--bg), rgba(10,10,13,0.2) 50%); }
+  }
+
+  /* ---------- Sections ---------- */
+  section { padding: 7rem 0; position: relative; }
+  .sec-head { max-width: 620px; margin-bottom: 3.5rem; }
+  .sec-head h2 { font-size: clamp(1.9rem, 3.4vw, 2.7rem); margin-top: 0.9rem; }
+  .sec-head p { margin-top: 1rem; color: var(--ink-dim); font-size: 1.02rem; line-height: 1.7; }
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* ---------- Property grid ---------- */
+  .grid-properties { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.9rem; }
+  @media (max-width: 980px) { .grid-properties { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 650px) { .grid-properties { grid-template-columns: 1fr; } }
+
+  .p-card {
+    position: relative; border-radius: 18px; overflow: hidden; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--line);
+    transform: perspective(900px) rotateX(0) rotateY(0);
+    transition: transform .12s ease, box-shadow .3s ease, border-color .3s ease;
+    text-align: left;
+  }
+  .p-card:hover { border-color: rgba(212,175,106,0.35); box-shadow: var(--shadow-lg); }
+  .p-card .art { position: relative; height: 15.5rem; }
+  .art { overflow: hidden; }
+  .art svg.silhouette { position: absolute; bottom: 0; left: 0; width: 100%; height: 68%; opacity: 0.75; }
+  .art .noise { position: absolute; inset: 0; opacity: 0.06; background-image: repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, #fff 0 1px, transparent 1px 3px); }
+  .art .shade { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.55) 100%); }
+  .p-card .price {
+    position: absolute; top: 1rem; right: 1rem; padding: 0.4rem 0.85rem; border-radius: 999px;
+    background: rgba(10,10,13,0.72); color: var(--gold-light); font-size: 0.86rem; font-weight: 600; backdrop-filter: blur(4px);
+  }
+  .p-card .loc { position: absolute; bottom: 1rem; left: 1rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: rgba(244,240,230,0.85); }
+  .fav-btn {
+    position: absolute; top: 1rem; left: 1rem; z-index: 5; width: 2.15rem; height: 2.15rem; border-radius: 999px;
+    background: rgba(10,10,13,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+    color: rgba(244,240,230,0.85); transition: color .2s, transform .15s, background .2s;
+  }
+  .fav-btn:hover { transform: scale(1.08); background: rgba(10,10,13,0.8); }
+  .fav-btn.active { color: var(--gold); }
+  .fav-btn.active svg { fill: var(--gold); }
+  .modal-fav-btn svg { width: 14px; height: 14px; }
+  .modal-fav-btn.active { border-color: var(--gold); color: var(--gold-light); background: rgba(212,175,106,0.1); }
+  .modal-fav-btn.active svg { fill: var(--gold); }
+  .p-card .body { padding: 1.5rem 1.5rem 4rem; }
+  .p-card .body h3 { font-size: 1.4rem; transition: color .2s; }
+  .p-card:hover .body h3 { color: var(--gold-light); }
+  .p-card .body .tag { margin-top: 0.5rem; font-size: 0.88rem; color: var(--ink-dim); line-height: 1.55; }
+  .p-card .specs { display: flex; gap: 1.2rem; margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--ink-dim); }
+  .p-card .specs span { display: flex; align-items: center; gap: 0.4rem; }
+  .p-card .cta-bar {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 0.75rem; text-align: center;
+    background: var(--gold); color: #171308; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    transform: translateY(100%); transition: transform .3s ease;
+  }
+  .p-card:hover .cta-bar { transform: translateY(0); }
+  .p-card .glow { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s ease; z-index: 3;
+    background: radial-gradient(280px circle at var(--gx,50%) var(--gy,50%), rgba(212,175,106,0.16), transparent 70%); }
+  .p-card:hover .glow { opacity: 1; }
+  .card-scene-wrap { position: absolute; inset: 0; perspective: 600px; display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .card-scene { position: absolute; top: 50%; left: 50%; transform-style: preserve-3d; width: 1px; height: 1px; }
+
+  .icon { width: 15px; height: 15px; stroke: var(--gold); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+  /* ---------- Philosophy ---------- */
+  .philosophy .wrap { display: grid; grid-template-columns: 1.1fr 1fr; gap: 4rem; align-items: center; }
+  .stat { transition: transform .15s ease; transform-style: preserve-3d; }
+  @media (max-width: 860px) { .philosophy .wrap { grid-template-columns: 1fr; } }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2rem; }
+  .stat { padding-left: 1.1rem; border-left: 1px solid rgba(212,175,106,0.35); }
+  .stat .num { font-family: var(--font-display); font-size: 2.3rem;
+    background: linear-gradient(100deg, var(--gold-dark) 10%, var(--gold-light) 40%, var(--gold) 65%, var(--gold-dark) 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .stat .label { margin-top: 0.35rem; font-size: 0.86rem; color: var(--ink-dim); }
+
+  /* ---------- Valuation ---------- */
+  .valuation { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .val-card { max-width: 760px; margin: 0 auto; background: rgba(10,10,13,0.55); border: 1px solid var(--line); border-radius: 22px; padding: 2.4rem; }
+  @media (max-width: 600px) { .val-card { padding: 1.6rem; } }
+  .steps { display: flex; align-items: center; margin-bottom: 2.6rem; }
+  .step { display: flex; align-items: center; gap: 0.6rem; flex: 1; }
+  .step .dot { width: 2rem; height: 2rem; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; border: 1px solid var(--surface-3); color: var(--ink-faint); transition: all .3s ease; flex-shrink: 0; }
+  .step.active .dot, .step.done .dot { background: var(--gold); border-color: var(--gold); color: #171308; }
+  .step .label { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); display: none; }
+  .step.active .label, .step.done .label { color: var(--gold-light); }
+  @media (min-width: 560px) { .step .label { display: block; } }
+  .step .bar { flex: 1; height: 1px; background: var(--surface-3); margin: 0 0.5rem; }
+  .step.done .bar, .step.active .bar { background: linear-gradient(90deg, var(--gold), var(--surface-3)); }
+
+  .field label { display: block; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 0.6rem; }
+  .field input[type="text"] {
+    width: 100%; background: var(--surface-3); border: 1px solid var(--line); border-radius: 12px; padding: 0.95rem 1.1rem;
+    color: var(--ink); font-size: 0.95rem; font-family: var(--font-body); transition: border-color .2s;
+  }
+  .field input[type="text"]::placeholder { color: var(--ink-faint); }
+  .field input[type="text"]:focus { border-color: var(--gold); outline: none; }
+  .field + .field { margin-top: 1.3rem; }
+
+  .choice-grid { display: grid; gap: 0.75rem; }
+  .cols-4 { grid-template-columns: repeat(4,1fr); }
+  .cols-2 { grid-template-columns: repeat(2,1fr); }
+  .cols-3 { grid-template-columns: repeat(3,1fr); }
+  @media (max-width: 560px) { .cols-4 { grid-template-columns: repeat(2,1fr); } .cols-3 { grid-template-columns: repeat(2,1fr); } }
+  .choice {
+    border: 1px solid var(--line); border-radius: 12px; padding: 0.95rem 0.7rem; text-align: center; font-size: 0.86rem;
+    color: var(--ink-dim); transition: all .2s; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  }
+  .choice:hover { border-color: var(--surface-3); }
+  .choice.picked { border-color: var(--gold); background: rgba(212,175,106,0.09); color: var(--gold-light); }
+  .choice .hint { font-size: 0.72rem; color: var(--ink-faint); }
+  .choice.picked .hint { color: rgba(240,223,174,0.7); }
+  .choice-left { text-align: left; padding: 0.9rem 1.1rem; }
+
+  .num-stepper { display: flex; align-items: center; justify-content: space-between; background: var(--surface-3); border: 1px solid var(--line); border-radius: 12px; padding: 0.3rem; }
+  .num-stepper button { width: 2.2rem; height: 2.2rem; border-radius: 9px; font-size: 1.1rem; color: var(--ink-dim); }
+  .num-stepper button:hover { background: rgba(212,175,106,0.12); color: var(--gold-light); }
+  .num-stepper .val { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+
+  .range-row { display: flex; justify-content: space-between; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 0.6rem; }
+  .range-row b { color: var(--gold-light); letter-spacing: normal; text-transform: none; font-weight: 600; }
+  input[type="range"] { width: 100%; accent-color: var(--gold); }
+
+  .step-actions { margin-top: 2.4rem; display: flex; align-items: center; justify-content: space-between; }
+  .step-actions .btn-gold:disabled { opacity: 0.35; pointer-events: none; }
+
+  .result { text-align: center; padding: 1rem 0; }
+  .result .spark { width: 3rem; height: 3rem; border-radius: 999px; margin: 0 auto 1.3rem; display: flex; align-items: center; justify-content: center; background: rgba(212,175,106,0.1); border: 1px solid rgba(212,175,106,0.4); }
+  .result .range { font-family: var(--font-display); font-size: clamp(1.9rem, 5vw, 2.7rem); margin: 0.6rem 0; font-variant-numeric: tabular-nums; }
+  .result .range .dash { color: var(--ink-faint); margin: 0 0.5rem; }
+  .result .sub { color: var(--ink-dim); font-size: 0.95rem; }
+  .result .sub b { color: var(--gold-light); font-weight: 600; }
+  .result .fine { margin-top: 1.6rem; font-size: 0.78rem; color: var(--ink-faint); }
+  .result-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 1.6rem; flex-wrap: wrap; }
+
+  /* ---------- Footer ---------- */
+  footer { border-top: 1px solid var(--line); }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 3rem; padding: 4.5rem 0; }
+  @media (max-width: 720px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+  .foot-grid .about { grid-column: span 1; }
+  @media (max-width: 720px) { .foot-grid .about { grid-column: span 2; } }
+  .foot-grid p.desc { margin-top: 1rem; color: var(--ink-dim); font-size: 0.92rem; line-height: 1.7; max-width: 26rem; }
+  .foot-grid h4 { font-family: var(--font-body); font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .foot-grid li { color: var(--ink-dim); font-size: 0.9rem; padding: 0.25rem 0; }
+  .foot-bottom { border-top: 1px solid var(--line); padding: 1.4rem 0; display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--ink-faint); flex-wrap: wrap; gap: 0.6rem; }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1.2rem;
+    background: rgba(10,10,13,0.86); backdrop-filter: blur(10px);
+    opacity: 0; pointer-events: none; transition: opacity .3s ease;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    position: relative; width: 100%; max-width: 980px; max-height: 90vh; overflow-y: auto;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow-lg);
+    transform: translateY(18px) scale(0.98); opacity: 0; transition: transform .35s cubic-bezier(.16,1,.3,1), opacity .35s ease;
+  }
+  .modal-backdrop.open .modal { transform: translateY(0) scale(1); opacity: 1; }
+  .modal-close { position: absolute; top: 1.1rem; right: 1.1rem; z-index: 5; width: 2.4rem; height: 2.4rem; border-radius: 999px; background: rgba(10,10,13,0.65); display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { color: var(--gold); }
+
+  /* ---------- Compare overlay ---------- */
+  .compare-modal { max-width: 1080px; padding: 2.4rem; }
+  .compare-empty { padding: 3rem 1rem; text-align: center; color: var(--ink-dim); }
+  .compare-empty svg { margin: 0 auto 1rem; color: var(--ink-faint); }
+  .compare-grid { display: flex; gap: 1.25rem; overflow-x: auto; padding-bottom: 0.5rem; }
+  .compare-item { flex: 0 0 15.5rem; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface-3); }
+  .compare-item .art { height: 8rem; }
+  .compare-item .remove {
+    position: absolute; top: 0.6rem; right: 0.6rem; z-index: 5; width: 1.8rem; height: 1.8rem; border-radius: 999px;
+    background: rgba(10,10,13,0.65); display: flex; align-items: center; justify-content: center; color: var(--ink);
+  }
+  .compare-item .remove:hover { color: var(--gold); }
+  .compare-item .body { padding: 1.1rem; }
+  .compare-item h4 { font-family: var(--font-display); font-size: 1.15rem; }
+  .compare-item .price { font-size: 0.98rem; color: var(--gold-light); margin-top: 0.2rem; }
+  .compare-item dl { margin: 0.9rem 0 0; display: grid; grid-template-columns: 1fr auto; gap: 0.45rem 0.5rem; font-size: 0.82rem; }
+  .compare-item dt { color: var(--ink-faint); }
+  .compare-item dd { margin: 0; text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .compare-item .view-btn { display: block; width: 100%; margin-top: 1rem; padding: 0.6rem; text-align: center; border-radius: 10px; border: 1px solid rgba(212,175,106,0.4); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-light); }
+  .compare-item .view-btn:hover { background: rgba(212,175,106,0.08); }
+
+  .toast {
+    position: fixed; bottom: 1.6rem; left: 50%; transform: translateX(-50%) translateY(20px); z-index: 200;
+    background: var(--surface-3); border: 1px solid var(--gold-400, var(--gold)); color: var(--ink); padding: 0.85rem 1.4rem;
+    border-radius: 999px; font-size: 0.86rem; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease;
+    box-shadow: var(--shadow-lg); max-width: 90vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .modal-gallery { position: relative; height: 22rem; }
+  @media (max-width: 620px) { .modal-gallery { height: 15rem; } }
+  .modal-gallery .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); width: 2.4rem; height: 2.4rem; border-radius: 999px; background: rgba(10,10,13,0.55); display: flex; align-items: center; justify-content: center; }
+  .modal-gallery .nav-btn:hover { color: var(--gold); }
+  .modal-gallery .nav-btn.prev { left: 1rem; } .modal-gallery .nav-btn.next { right: 1rem; }
+  .modal-gallery .dots { position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.4rem; }
+  .modal-gallery .dots button { width: 6px; height: 6px; border-radius: 999px; background: rgba(244,240,230,0.4); transition: all .2s; }
+  .modal-gallery .dots button.active { width: 22px; background: var(--gold); }
+  .modal-content { display: grid; grid-template-columns: 3fr 2fr; gap: 2.4rem; padding: 2.2rem 2.4rem 2.6rem; }
+  @media (max-width: 780px) { .modal-content { grid-template-columns: 1fr; } }
+  .modal-content .loc { display: flex; align-items: center; gap: 0.4rem; font-size: 0.86rem; color: var(--ink-dim); }
+  .modal-content h3 { font-size: 1.9rem; margin-top: 0.4rem; }
+  .modal-content .price { font-size: 1.25rem; color: var(--gold-light); margin-top: 0.3rem; }
+  .modal-content .specs { display: flex; gap: 1.4rem; flex-wrap: wrap; margin: 1.3rem 0; padding: 1.1rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 0.88rem; color: var(--ink-dim); }
+  .modal-content .specs span { display: flex; align-items: center; gap: 0.45rem; }
+  .modal-content .desc { color: var(--ink-dim); font-size: 0.95rem; line-height: 1.75; }
+  .feat-list { margin-top: 1.3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem 1rem; }
+  @media (max-width: 460px) { .feat-list { grid-template-columns: 1fr; } }
+  .feat-list li { display: flex; gap: 0.5rem; font-size: 0.87rem; align-items: flex-start; }
+  .fp-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
+  .fp-viewport { height: 20rem; border-radius: 16px; border: 1px solid var(--line); background: #0d0d10; overflow: hidden; position: relative; perspective: 1100px; cursor: grab; }
+  .fp-viewport:active { cursor: grabbing; }
+  .fp-scene { position: absolute; top: 50%; left: 50%; transform-style: preserve-3d; width: 1px; height: 1px; }
+  .fp-hint { text-align: center; font-size: 0.74rem; color: var(--ink-faint); margin-top: 0.7rem; }
+  .fp-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.9rem; }
+  .tab-btn { padding: 0.5rem 1rem; border-radius: 999px; font-size: 0.76rem; letter-spacing: 0.04em; border: 1px solid var(--line); color: var(--ink-dim); transition: all .2s; }
+  .tab-btn:hover { border-color: var(--surface-3); }
+  .tab-btn.active { border-color: var(--gold); color: var(--gold-light); background: rgba(212,175,106,0.08); }
+
+  /* ---------- Dream Home builder ---------- */
+  .dream-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.6rem; align-items: start; }
+  @media (max-width: 900px) { .dream-layout { grid-template-columns: 1fr; } }
+  .dream-group label { display: block; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 0.75rem; }
+  .dream-group + .dream-group { margin-top: 1.7rem; }
+  .dream-group.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .swatch-choice { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; cursor: pointer; }
+  .swatch { width: 100%; aspect-ratio: 1; border-radius: 10px; border: 2px solid var(--line); transition: border-color .2s, transform .2s; }
+  .swatch-choice:hover .swatch { transform: translateY(-2px); }
+  .swatch-choice.picked .swatch { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,106,0.15); }
+  .swatch-choice span { font-size: 0.76rem; color: var(--ink-dim); text-align: center; }
+  .swatch-choice.picked span { color: var(--gold-light); }
+  .dream-summary { margin-top: 1.6rem; padding: 1rem 1.2rem; border-radius: 12px; background: var(--surface-3); border: 1px solid var(--line); font-size: 0.9rem; color: var(--ink-dim); line-height: 1.6; }
+  .dream-summary strong { color: var(--ink); font-weight: 600; }
+  .dream-preview { position: sticky; top: 6rem; }
+  @media (max-width: 900px) { .dream-preview { position: static; } }
+
+  .genie-callout {
+    display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+    max-width: 760px; margin: 0 auto 3.2rem; padding: 1.5rem 1.8rem; border-radius: 16px;
+    border: 1px solid rgba(212,175,106,0.35); background: rgba(212,175,106,0.06);
+  }
+  .genie-callout-title { font-family: var(--font-display); font-size: 1.15rem; }
+  .genie-callout-sub { color: var(--ink-dim); font-size: 0.86rem; margin-top: 0.3rem; max-width: 30rem; }
+  .genie-modal { max-width: 640px; padding: 2.4rem; }
+  @media (max-width: 600px) { .genie-modal { padding: 1.6rem; } }
+  .genie-q-title { font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 1.5rem; text-wrap: balance; }
+  .genie-hint { color: var(--ink-faint); font-size: 0.8rem; font-family: var(--font-body); font-weight: 400; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .float-card, .scroll-hint { animation: none !important; }
+    .reveal { transition: none; opacity: 1; transform: none; }
+  }
+</style>
+
+<header id="site-header">
+  <div class="wrap">
+    <a class="brand" href="#top" style="text-decoration:none;">AURA<small>&nbsp;ESTATES</small></a>
+    <nav class="links">
+      <a href="#properties">Properties</a>
+      <a href="#dream">Dream Home</a>
+      <a href="#valuation">Valuation</a>
+      <a href="#philosophy">Philosophy</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="nav-fav-btn" id="nav-fav-btn" aria-label="Saved properties" onclick="openCompare()">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7-4.35-9.5-8.9A5.4 5.4 0 0112 6.3a5.4 5.4 0 019.5 5.8C19 16.65 12 21 12 21z"/></svg>
+        <span class="fav-badge" id="fav-badge" hidden>0</span>
+      </button>
+      <button class="btn btn-outline" style="padding:0.6rem 1.2rem;font-size:0.7rem;" onclick="scrollToId('valuation')">Get Valuation</button>
+      <button class="burger" aria-label="Menu" onclick="toggleMobileNav()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-nav" style="display:none;padding:1rem 1.75rem 1.4rem;border-top:1px solid var(--line);background:rgba(10,10,13,0.95);">
+    <ul style="display:flex;flex-direction:column;gap:1rem;font-size:1rem;">
+      <li><a href="#properties" onclick="toggleMobileNav()">Properties</a></li>
+      <li><a href="#dream" onclick="toggleMobileNav()">Dream Home</a></li>
+      <li><a href="#valuation" onclick="toggleMobileNav()">Valuation</a></li>
+      <li><a href="#philosophy" onclick="toggleMobileNav()">Philosophy</a></li>
+      <li><a href="#contact" onclick="toggleMobileNav()">Contact</a></li>
+      <li><a href="#" onclick="toggleMobileNav(); openCompare();">Saved Properties</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="hero">
+    <div class="hero-stage" id="hero-stage">
+      <div class="hero-scene" id="hero-scene"></div>
+    </div>
+    <div class="hero-scrim"></div>
+    <div class="hero-copy">
+      <div class="wrap">
+        <p class="eyebrow reveal">Aura Estates &mdash; Est. Private Collection</p>
+        <h1 class="reveal">Redefining<br><em>Luxury Living</em></h1>
+        <p class="lede reveal">A curated portfolio of the world&rsquo;s most extraordinary residences &mdash; architectural masterpieces, private estates, and sky-borne penthouses, presented to a discerning few.</p>
+        <div class="hero-actions reveal">
+          <button class="btn btn-gold" onclick="scrollToId('properties')">
+            Explore Properties
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>
+          </button>
+          <button class="btn btn-ghost" onclick="scrollToId('valuation')">Value My Property</button>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+  </section>
+
+  <section id="properties">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="eyebrow">The Collection</p>
+        <h2>Featured Properties</h2>
+        <p>A hand-selected portfolio of architectural landmarks and private estates, each vetted personally by our acquisitions team.</p>
+      </div>
+      <div class="grid-properties" id="property-grid"></div>
+    </div>
+  </section>
+
+  <section id="dream">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="eyebrow">Design Studio</p>
+        <h2>Build Your Dream Home</h2>
+        <p>Compose your own estate in real time &mdash; choose an architectural style, palette, scale, and signature amenities, then bring your vision to our design team.</p>
+      </div>
+
+      <div class="genie-callout reveal">
+        <div>
+          <p class="genie-callout-title">Not sure where to start?</p>
+          <p class="genie-callout-sub">Answer four quick questions and we&rsquo;ll generate a personalized estate matched to your preferences.</p>
+        </div>
+        <button type="button" class="btn btn-gold" onclick="openGenie()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z"/></svg>
+          Generate My Dream Home
+        </button>
+      </div>
+
+      <div class="dream-layout reveal">
+        <div class="dream-controls" id="dream-controls">
+          <div class="dream-group">
+            <label>Architectural Style</label>
+            <div class="choice-grid cols-2" id="dream-style"></div>
+          </div>
+          <div class="dream-group">
+            <label>Material Palette</label>
+            <div class="choice-grid cols-4" id="dream-palette"></div>
+          </div>
+          <div class="dream-group two-col">
+            <div>
+              <label>Stories</label>
+              <div class="num-stepper" id="dream-stories-wrap">
+                <button type="button" data-d="-1" aria-label="Fewer stories">&minus;</button>
+                <span class="val" id="dream-stories-val">1</span>
+                <button type="button" data-d="1" aria-label="More stories">+</button>
+              </div>
+            </div>
+            <div>
+              <label>Footprint</label>
+              <div class="choice-grid cols-3" id="dream-footprint"></div>
+            </div>
+          </div>
+          <div class="dream-group">
+            <label>Signature Amenities</label>
+            <div class="choice-grid cols-3" id="dream-addons"></div>
+          </div>
+          <div class="dream-summary" id="dream-summary"></div>
+          <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:1.4rem;" onclick="scrollToId('valuation')">
+            Request a Private Consultation
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>
+          </button>
+        </div>
+        <div class="dream-preview">
+          <div class="fp-viewport viewport-sky" id="dream-viewport" style="height:26rem;"><div class="fp-scene" id="dream-scene"></div></div>
+          <p class="fp-hint">Drag to rotate &bull; Scroll to zoom</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="philosophy" id="philosophy">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="eyebrow">Our Philosophy</p>
+        <h2 style="margin-top:0.9rem;font-size:clamp(1.9rem,3.4vw,2.6rem);">A Home Is the Last Great Luxury.</h2>
+        <p style="margin-top:1rem;color:var(--ink-dim);font-size:1.02rem;line-height:1.75;">We represent fewer than sixty properties at any given time. Each is chosen not for its price, but for its architectural integrity, provenance, and the story it tells. Our role is quiet, precise, and entirely in service of that story.</p>
+      </div>
+      <div class="stat-grid reveal">
+        <div class="stat"><div class="num">18+</div><div class="label">Years of Discretion</div></div>
+        <div class="stat"><div class="num">$4.2B</div><div class="label">In Closed Transactions</div></div>
+        <div class="stat"><div class="num">27</div><div class="label">Countries Represented</div></div>
+        <div class="stat"><div class="num">140</div><div class="label">Private Estates Sold</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="valuation" id="valuation">
+    <div class="wrap">
+      <div class="sec-head reveal" style="text-align:center;margin-left:auto;margin-right:auto;">
+        <p class="eyebrow" style="justify-content:center;">Instant Estimate</p>
+        <h2>What Is Your Home Worth?</h2>
+        <p>Answer a few questions and our valuation model &mdash; trained on comparable luxury sales &mdash; will estimate your property&rsquo;s current market value.</p>
+      </div>
+
+      <div class="val-card reveal">
+        <div class="steps" id="val-steps"></div>
+        <div id="val-body"></div>
+        <div class="step-actions" id="val-actions"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap foot-grid">
+    <div class="about">
+      <span class="brand" style="font-size:1.3rem;">AURA<small>&nbsp;ESTATES</small></span>
+      <p class="desc">A boutique agency representing the world&rsquo;s most extraordinary residences, for those who consider a home the ultimate work of art.</p>
+    </div>
+    <div>
+      <h4>Concierge</h4>
+      <ul><li>hello@auraestates.com</li><li>+1 (310) 555-0199</li><li>By private appointment only</li></ul>
+    </div>
+    <div>
+      <h4>Offices</h4>
+      <ul><li>Los Angeles</li><li>New York</li><li>London</li><li>Milan</li></ul>
+    </div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>&copy; <span id="year"></span> Aura Estates. All rights reserved.</span>
+    <span>Redefining Luxury Living</span>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" id="modal">
+    <button class="modal-close" aria-label="Close" onclick="closeModal()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="compare-backdrop">
+  <div class="modal compare-modal" id="compare-modal">
+    <button class="modal-close" aria-label="Close" onclick="closeCompare()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <p class="eyebrow" style="margin-bottom:0.5rem;">Saved Properties</p>
+    <h3 class="font-display" style="font-family:var(--font-display);font-size:1.9rem;margin-bottom:1.6rem;">Compare Your Shortlist</h3>
+    <div id="compare-body"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="genie-backdrop">
+  <div class="modal genie-modal" id="genie-modal">
+    <button class="modal-close" aria-label="Close" onclick="closeGenie()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <p class="eyebrow" style="margin-bottom:0.5rem;">Dream Home Generator</p>
+    <h3 style="font-family:var(--font-display);font-size:1.7rem;margin-bottom:1.6rem;">Tell Us What You Love</h3>
+    <div class="steps" id="genie-steps"></div>
+    <div id="genie-body"></div>
+    <div class="step-actions" id="genie-actions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DATA ============ */
+const properties = [
+  { id:'p1', name:'The Monolith', location:'Bel Air, California', price:24500000, beds:6, baths:8, sqft:12400,
+    tagline:'A concrete-and-glass sculpture suspended above the canyon.',
+    description:'Carved into the hillside, The Monolith is a study in restraint — board-formed concrete, floor-to-ceiling glazing, and a cantilevered infinity pool that appears to pour into the canyon below. Every material was chosen to age in silence: raw stone, brushed bronze, and white oak.',
+    gradient:['#241d12','#3a2f1c'], accent:'#d4af6a',
+    features:['Cantilevered infinity pool','Home theatre & wine cellar','Floor-to-ceiling glazing','Private car gallery (8 vehicles)'],
+    rooms:[{l:'Great Room',x:-70,z:0,w:130,d:150},{l:'Primary Suite',x:80,z:-55,w:100,d:105},{l:'Kitchen',x:60,z:60,w:85,d:75},{l:'Study',x:-80,z:85,w:70,d:60},{l:'Guest Wing',x:150,z:25,w:80,d:100}] },
+  { id:'p2', name:'Villa Serena', location:'Lake Como, Italy', price:18900000, beds:7, baths:9, sqft:15800,
+    tagline:'Renaissance stonework meets uncompromising modern comfort.',
+    description:'Set on three private acres along the western shore, Villa Serena pairs 18th-century stone façades with a fully re-engineered modern interior — radiant limestone floors, a hidden spa level, and a private boat dock for arrival by water.',
+    gradient:['#1c222a','#123a3a'], accent:'#cbb387',
+    features:['Private lake dock & boathouse','Subterranean spa & sauna','Terraced Italian gardens','Original 18th-century frescoes'],
+    rooms:[{l:'Grand Salon',x:0,z:-35,w:150,d:115},{l:'Dining Hall',x:-110,z:-28,w:85,d:100},{l:'Primary Suite',x:110,z:-42,w:90,d:95},{l:'Loggia',x:0,z:85,w:150,d:60},{l:'Spa Level',x:-110,z:70,w:80,d:70}] },
+  { id:'p3', name:'Sky Atrium Penthouse', location:'Manhattan, New York', price:32500000, beds:5, baths:6, sqft:9200,
+    tagline:'A private atrium in the clouds, 92 storeys above the city.',
+    description:'Occupying the top two floors of one of Manhattan\'s most exclusive towers, Sky Atrium features a double-height botanical atrium, 270-degree skyline views, and a private elevator vestibule accessible only by key-card.',
+    gradient:['#181a22','#26232f'], accent:'#e2c894',
+    features:['Private elevator vestibule','Double-height botanical atrium','270° skyline views','Smart climate & lighting throughout'],
+    rooms:[{l:'Atrium',x:0,z:0,w:100,d:100},{l:'Living Room',x:110,z:-45,w:100,d:85},{l:'Primary Suite',x:-110,z:-50,w:90,d:95},{l:'Kitchen',x:105,z:60,w:80,d:70},{l:'Library',x:-105,z:65,w:75,d:65}] },
+  { id:'p4', name:'The Dune House', location:'Malibu, California', price:21200000, beds:5, baths:7, sqft:10800,
+    tagline:'Weathered timber and glass, anchored to the shoreline.',
+    description:'Designed around a series of shifting sand-dune forms, The Dune House uses reclaimed timber cladding, a living roof, and pocketing glass walls that dissolve the boundary between the great room and the Pacific.',
+    gradient:['#211f1a','#392f1c'], accent:'#d8b774',
+    features:['Pocketing glass walls','Living roof & solar array','Private beach access','Outdoor fire lounge'],
+    rooms:[{l:'Great Room',x:0,z:-45,w:140,d:100},{l:'Primary Suite',x:-110,z:35,w:85,d:95},{l:'Kitchen',x:105,z:30,w:80,d:80},{l:'Media Room',x:0,z:90,w:95,d:60}] },
+  { id:'p5', name:'Obsidian Ridge', location:'Aspen, Colorado', price:16700000, beds:6, baths:7, sqft:11200,
+    tagline:'Charred timber and blackened steel against alpine white.',
+    description:'A ski-in, ski-out retreat clad in shou-sugi-ban timber, Obsidian Ridge balances rugged materiality with warm, museum-quality interiors — a double-sided fireplace anchors the great room, visible from every wing of the home.',
+    gradient:['#19181c','#2c2620'], accent:'#d1ab68',
+    features:['Ski-in, ski-out access','Double-sided stone fireplace','Indoor-outdoor hot springs','Heated motor court'],
+    rooms:[{l:'Great Room',x:0,z:0,w:130,d:115},{l:'Primary Suite',x:115,z:-50,w:85,d:90},{l:'Bunk Wing',x:-115,z:-50,w:85,d:90},{l:'Kitchen',x:-110,z:60,w:80,d:70},{l:'Spa',x:110,z:65,w:75,d:65}] },
+  { id:'p6', name:'The Glass Pavilion', location:'Kyoto, Japan', price:14300000, beds:4, baths:5, sqft:7600,
+    tagline:'Minimalist pavilion architecture within a private bamboo grove.',
+    description:'A meditation on light and negative space, The Glass Pavilion sits within a walled bamboo garden. Structural steel columns are set flush to invisible glass, so the roofline appears to float above the koi pond below.',
+    gradient:['#171c17','#232a24'], accent:'#c7b27e',
+    features:['Private bamboo garden & koi pond','Engawa veranda on all sides','Hinoki cypress soaking tub','Tea ceremony room'],
+    rooms:[{l:'Living Pavilion',x:0,z:-25,w:115,d:95},{l:'Primary Suite',x:-95,z:50,w:80,d:85},{l:'Tea Room',x:90,z:55,w:70,d:70},{l:'Kitchen',x:85,z:-65,w:75,d:65}] }
+];
+
+const silhouettes = [
+  'M20 95 L20 60 L70 60 L70 45 L115 45 L115 95 Z M70 60 L70 95 M40 60 L40 45 L100 45',
+  'M15 95 L15 70 L45 70 L45 50 L85 50 L85 35 L120 35 L120 95 Z M85 50 L85 95 M45 70 L45 95',
+  'M25 95 L25 55 L60 35 L95 55 L95 95 Z M25 55 L95 55 M60 35 L60 95'
+];
+
+function fmtPrice(v){ return v>=1e6 ? '$'+(v/1e6).toFixed(1).replace(/\.0$/,'')+'M' : '$'+v.toLocaleString('en-US'); }
+function fmtMoney(v){ return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(v); }
+
+const ICONS = {
+  bed:'<path d="M3 18v-6a2 2 0 012-2h4a2 2 0 012 2v2M3 18v2M3 18h18m0 0v2m0-2v-6a2 2 0 00-2-2h-3.5"/><circle cx="7" cy="9" r="1.4"/>',
+  bath:'<path d="M4 12h16v2a5 5 0 01-5 5H9a5 5 0 01-5-5v-2z"/><path d="M6 12V6a2 2 0 012-2 2 2 0 012 2"/><path d="M4 19v1M16 19v1"/>',
+  ruler:'<path d="M3 8h18v8H3z"/><path d="M7 8v3M11 8v3M15 8v3"/>',
+  pin:'<path d="M12 21s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/>',
+  check:'<path d="M5 12l4 4 10-10"/>',
+  heart:'<path d="M12 21s-7-4.35-9.5-8.9A5.4 5.4 0 0112 6.3a5.4 5.4 0 019.5 5.8C19 16.65 12 21 12 21z"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>'
+};
+function icon(name, cls){ return '<svg class="'+(cls||'icon')+'" viewBox="0 0 24 24">'+ICONS[name]+'</svg>'; }
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const PALETTES = {
+  gold:     { fc:'#3a3a44', fc2:'#26262d', fct:'#45454f', glass:'rgba(170,200,214,0.28)' },
+  ivory:    { fc:'#cbc3b0', fc2:'#a89f8c', fct:'#e2dbc9', glass:'rgba(220,230,236,0.42)' },
+  timber:   { fc:'#2c2018', fc2:'#1a1310', fct:'#3c2b1e', glass:'rgba(200,150,90,0.22)' },
+  platinum: { fc:'#3d4650', fc2:'#262c33', fct:'#4d5762', glass:'rgba(210,225,235,0.35)' },
+};
+const FOOTPRINTS = { small:0.78, medium:1, large:1.28 };
+// Function declarations (makeCuboid, buildVilla/Tower/Lodge/Pavilion, buildHouseModel) are
+// hoisted below — safe to reference here even though they're defined later in the file.
+const STYLE_BUILDERS = { villa: buildVilla, tower: buildTower, lodge: buildLodge, pavilion: buildPavilion };
+
+const HOUSE_CONFIGS = [
+  { style:'villa',    palette:'gold',     stories:2, footprint:'medium', addons:['pool'] },        // The Monolith
+  { style:'villa',    palette:'ivory',    stories:1, footprint:'large',  addons:['guesthouse'] },  // Villa Serena
+  { style:'tower',    palette:'platinum', stories:3, footprint:'small',  addons:['garden'] },       // Sky Atrium Penthouse
+  { style:'pavilion', palette:'timber',   stories:1, footprint:'medium', addons:['pool'] },         // The Dune House
+  { style:'lodge',    palette:'timber',   stories:2, footprint:'medium', addons:['guesthouse'] },   // Obsidian Ridge
+  { style:'pavilion', palette:'ivory',    stories:1, footprint:'small',  addons:['garden'] },       // The Glass Pavilion
+];
+
+/* ============ PROPERTY GRID ============ */
+const grid = document.getElementById('property-grid');
+properties.forEach((p, i) => {
+  const card = document.createElement('div');
+  card.className = 'p-card reveal';
+  card.setAttribute('role', 'button');
+  card.tabIndex = 0;
+  card.innerHTML = `
+    <div class="art" style="background:linear-gradient(135deg, ${p.gradient[0]}, ${p.gradient[1]});">
+      <div class="card-scene-wrap"><div class="card-scene"></div></div>
+      <div class="shade"></div>
+      <button type="button" class="fav-btn" data-fav-id="${p.id}" aria-label="Save ${p.name} to compare">${icon('heart')}</button>
+      <div class="price">${fmtPrice(p.price)}</div>
+      <div class="loc">${icon('pin')} ${p.location}</div>
+    </div>
+    <div class="body">
+      <h3>${p.name}</h3>
+      <p class="tag">${p.tagline}</p>
+      <div class="specs">
+        <span>${icon('bed')} ${p.beds}</span>
+        <span>${icon('bath')} ${p.baths}</span>
+        <span>${icon('ruler')} ${p.sqft.toLocaleString()} sqft</span>
+      </div>
+    </div>
+    <div class="cta-bar">View Details</div>
+    <div class="glow"></div>
+  `;
+  let hoverTilt = 0;
+  card.addEventListener('mousemove', (e) => {
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+    card.style.transform = `perspective(900px) rotateX(${(0.5-py)*9}deg) rotateY(${(px-0.5)*9}deg)`;
+    card.style.setProperty('--gx', (px*100)+'%');
+    card.style.setProperty('--gy', (py*100)+'%');
+    hoverTilt = (py-0.5)*16;
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = 'perspective(900px) rotateX(0) rotateY(0)'; hoverTilt = 0; });
+  card.addEventListener('click', () => openModal(p));
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(p); }
+  });
+  card.querySelector('.fav-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleFavorite(p.id);
+  });
+  grid.appendChild(card);
+
+  const cardScene = card.querySelector('.card-scene');
+  buildHouseModel(cardScene, { ...HOUSE_CONFIGS[i], ground: false });
+  let ry = -25 + i*9;
+  function applyCard(){ cardScene.style.transform = `translate(-50%,-50%) scale(0.42) rotateX(${14+hoverTilt}deg) rotateZ(${ry}deg)`; }
+  applyCard();
+  const io2 = new IntersectionObserver((entries) => {
+    entries.forEach(en => { cardSpin.active = en.isIntersecting; });
+  }, { threshold: 0.05 });
+  const cardSpin = { active: true };
+  io2.observe(card);
+  (function spin(){
+    if(cardSpin.active && !reduceMotion){ ry += 0.1; applyCard(); }
+    requestAnimationFrame(spin);
+  })();
+});
+
+/* ============ FAVORITES + COMPARE ============ */
+const MAX_FAVORITES = 4;
+const FAVORITES_KEY = 'aura-estates-favorites';
+
+function loadFavorites(){
+  try {
+    const raw = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+    return Array.isArray(raw) ? raw : [];
+  } catch (e) { return []; }
+}
+function saveFavorites(){
+  try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites)); } catch (e) {}
+}
+
+let favorites = loadFavorites();
+
+function showToast(message){
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+function toggleFavorite(id){
+  if (favorites.includes(id)) {
+    favorites = favorites.filter(f => f !== id);
+  } else {
+    if (favorites.length >= MAX_FAVORITES) {
+      showToast(`You can compare up to ${MAX_FAVORITES} properties. Remove one to add another.`);
+      return;
+    }
+    favorites = [...favorites, id];
+    showToast('Saved to your comparison list.');
+  }
+  saveFavorites();
+  renderFavoriteUI();
+}
+
+function renderFavoriteUI(){
+  document.querySelectorAll('.fav-btn').forEach(btn => {
+    btn.classList.toggle('active', favorites.includes(btn.dataset.favId));
+  });
+  const modalFav = document.querySelector('.modal-fav-btn');
+  if (modalFav) {
+    const active = favorites.includes(modalFav.dataset.favId);
+    modalFav.classList.toggle('active', active);
+    modalFav.querySelector('.fav-label').textContent = active ? 'Saved' : 'Save';
+  }
+  const navBtn = document.getElementById('nav-fav-btn');
+  const badge = document.getElementById('fav-badge');
+  navBtn.classList.toggle('has-items', favorites.length > 0);
+  badge.textContent = String(favorites.length);
+  badge.hidden = favorites.length === 0;
+  if (document.getElementById('compare-backdrop').classList.contains('open')) {
+    renderCompare();
+  }
+}
+
+function renderCompare(){
+  const body = document.getElementById('compare-body');
+  const saved = favorites.map(id => properties.find(p => p.id === id)).filter(Boolean);
+
+  if (saved.length === 0) {
+    body.innerHTML = `
+      <div class="compare-empty">
+        ${icon('heart').replace('class="icon"', 'class="icon" style="width:34px;height:34px;"')}
+        <p>No saved properties yet.</p>
+        <p style="margin-top:0.4rem;font-size:0.85rem;">Tap the heart on any property card to add it here for comparison.</p>
+      </div>`;
+    return;
+  }
+
+  body.innerHTML = `<div class="compare-grid">${saved.map((p, i) => `
+    <div class="compare-item">
+      <div class="art" style="position:relative;background:linear-gradient(135deg, ${p.gradient[0]}, ${p.gradient[1]});">
+        <svg class="silhouette" viewBox="0 0 140 100" preserveAspectRatio="xMidYMax slice"><path d="${silhouettes[i % 3]}" fill="none" stroke="${p.accent}" stroke-width="1.1"/></svg>
+        <div class="shade"></div>
+        <button type="button" class="remove" data-remove-id="${p.id}" aria-label="Remove ${p.name}">${icon('x','')}</button>
+      </div>
+      <div class="body">
+        <h4>${p.name}</h4>
+        <p class="price">${fmtPrice(p.price)}</p>
+        <dl>
+          <dt>Location</dt><dd>${p.location}</dd>
+          <dt>Bedrooms</dt><dd>${p.beds}</dd>
+          <dt>Bathrooms</dt><dd>${p.baths}</dd>
+          <dt>Size</dt><dd>${p.sqft.toLocaleString()} sqft</dd>
+          <dt>$ / sqft</dt><dd>${fmtPrice(Math.round(p.price / p.sqft))}</dd>
+        </dl>
+        <button type="button" class="view-btn" data-view-id="${p.id}">View Details</button>
+      </div>
+    </div>
+  `).join('')}</div>`;
+
+  body.querySelectorAll('[data-remove-id]').forEach(btn => btn.addEventListener('click', () => toggleFavorite(btn.dataset.removeId)));
+  body.querySelectorAll('[data-view-id]').forEach(btn => btn.addEventListener('click', () => {
+    const p = properties.find(pr => pr.id === btn.dataset.viewId);
+    closeCompare();
+    if (p) openModal(p);
+  }));
+}
+
+function openCompare(){
+  renderCompare();
+  document.getElementById('compare-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCompare(){
+  document.getElementById('compare-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('compare-backdrop').addEventListener('click', (e) => {
+  if (e.target.id === 'compare-backdrop') closeCompare();
+});
+
+renderFavoriteUI();
+
+/* ============ MODAL + FLOOR PLAN ============ */
+const backdrop = document.getElementById('modal-backdrop');
+const modalBody = document.getElementById('modal-body');
+let modalOrbit = null;
+let modalTab = 'exterior';
+
+function openModal(p){
+  modalTab = 'exterior';
+  let active = 0;
+  const renderGallery = () => `
+    <div class="art" style="position:absolute;inset:0;background:linear-gradient(135deg, ${p.gradient[0]}, ${p.gradient[1]});">
+      <div class="noise"></div>
+      <svg class="silhouette" viewBox="0 0 140 100" preserveAspectRatio="xMidYMax slice"><path d="${silhouettes[active % 3]}" fill="none" stroke="${p.accent}" stroke-width="1.1"/></svg>
+      <div class="shade"></div>
+    </div>`;
+
+  modalBody.innerHTML = `
+    <div class="modal-gallery" id="mg">
+      ${renderGallery()}
+      <button class="nav-btn prev" aria-label="Previous image">${icon('pin','').replace('pin','')}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="nav-btn next" aria-label="Next image"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+      <div class="dots">${[0,1,2].map(i=>`<button data-i="${i}" class="${i===0?'active':''}" aria-label="Show image ${i+1}"></button>`).join('')}</div>
+    </div>
+    <div class="modal-content">
+      <div>
+        <div class="loc">${icon('pin')} ${p.location}</div>
+        <h3>${p.name}</h3>
+        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:0.3rem;">
+          <p class="price" style="margin-top:0;">${fmtPrice(p.price)}</p>
+          <button type="button" class="btn btn-outline modal-fav-btn" data-fav-id="${p.id}" style="padding:0.5rem 1rem;font-size:0.68rem;">
+            ${icon('heart')} <span class="fav-label">Save</span>
+          </button>
+        </div>
+        <div class="specs">
+          <span>${icon('bed')} ${p.beds} Bedrooms</span>
+          <span>${icon('bath')} ${p.baths} Baths</span>
+          <span>${icon('ruler')} ${p.sqft.toLocaleString()} sqft</span>
+        </div>
+        <p class="desc">${p.description}</p>
+        <ul class="feat-list">${p.features.map(f=>`<li>${icon('check')} ${f}</li>`).join('')}</ul>
+      </div>
+      <div id="modal-right"></div>
+    </div>
+  `;
+
+  const mg = document.getElementById('mg');
+  function setActive(i){ active = (i+3)%3; mg.querySelector('.art').outerHTML = renderGallery();
+    mg.querySelectorAll('.dots button').forEach((b,idx)=>b.classList.toggle('active', idx===active)); }
+  mg.querySelector('.prev').addEventListener('click', ()=>setActive(active-1));
+  mg.querySelector('.next').addEventListener('click', ()=>setActive(active+1));
+  mg.querySelectorAll('.dots button').forEach(b=>b.addEventListener('click', ()=>setActive(+b.dataset.i)));
+
+  modalBody.querySelector('.modal-fav-btn').addEventListener('click', () => toggleFavorite(p.id));
+
+  renderModalRightPanel(p);
+
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderModalRightPanel(p){
+  const panel = document.getElementById('modal-right');
+  panel.innerHTML = `
+    <div class="fp-tabs">
+      <button type="button" class="tab-btn ${modalTab==='exterior'?'active':''}" data-tab="exterior">3D Exterior</button>
+      <button type="button" class="tab-btn ${modalTab==='floor'?'active':''}" data-tab="floor">Floor Plan</button>
+    </div>
+    <div class="fp-viewport" id="fp-viewport"><div class="fp-scene" id="fp-scene"></div></div>
+    <p class="fp-hint">Drag to rotate &bull; Scroll to zoom</p>
+  `;
+  panel.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.tab === modalTab) return;
+    modalTab = b.dataset.tab;
+    renderModalRightPanel(p);
+  }));
+
+  if (modalOrbit) modalOrbit.cleanup();
+  const viewport = document.getElementById('fp-viewport');
+  const scene = document.getElementById('fp-scene');
+  viewport.classList.toggle('viewport-sky', modalTab === 'exterior');
+  if (modalTab === 'exterior') {
+    buildHouseModel(scene, HOUSE_CONFIGS[properties.indexOf(p)]);
+    modalOrbit = createOrbitViewport(viewport, scene, { rx:16, ry:-28, zoom:1, minZoom:0.6, maxZoom:1.6 });
+  } else {
+    buildFloorPlanScene(scene, p);
+    modalOrbit = createOrbitViewport(viewport, scene, { rx:52, ry:-34, zoom:1 });
+  }
+}
+
+function closeModal(){
+  backdrop.classList.remove('open');
+  document.body.style.overflow = '';
+  if (modalOrbit) { modalOrbit.cleanup(); modalOrbit = null; }
+}
+backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+function createOrbitViewport(viewport, scene, {rx=52, ry=-34, zoom=1, minZoom=0.55, maxZoom=1.8, baseScale=1, autoRotate=true}={}){
+  let dragging = false, lastX = 0, lastY = 0, raf;
+  function apply(){ scene.style.transform = `translate(-50%,-50%) scale(${zoom*baseScale}) rotateY(${ry}deg) rotateX(${rx}deg)`; }
+  apply();
+  function onDown(e){ dragging = true; const p = e.touches ? e.touches[0] : e; lastX = p.clientX; lastY = p.clientY; viewport.style.cursor = 'grabbing'; }
+  function onMove(e){
+    if(!dragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    const dx = p.clientX - lastX, dy = p.clientY - lastY;
+    lastX = p.clientX; lastY = p.clientY;
+    ry += dx * 0.4;
+    rx = Math.max(15, Math.min(85, rx - dy * 0.3));
+    apply();
+  }
+  function onUp(){ dragging = false; viewport.style.cursor = 'grab'; }
+  function onWheel(e){ e.preventDefault(); zoom = Math.max(minZoom, Math.min(maxZoom, zoom - e.deltaY*0.001)); apply(); }
+
+  viewport.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  viewport.addEventListener('touchstart', onDown, {passive:true});
+  viewport.addEventListener('touchmove', onMove, {passive:true});
+  viewport.addEventListener('touchend', onUp);
+  viewport.addEventListener('wheel', onWheel, {passive:false});
+
+  function loop(){
+    if(!dragging && autoRotate && !reduceMotion){ ry += 0.05; apply(); }
+    raf = requestAnimationFrame(loop);
+  }
+  loop();
+
+  return {
+    cleanup(){
+      cancelAnimationFrame(raf);
+      viewport.removeEventListener('mousedown', onDown);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      viewport.removeEventListener('wheel', onWheel);
+    }
+  };
+}
+
+function buildFloorPlanScene(scene, property){
+  scene.innerHTML = '';
+  const SCALE = 1.0;
+  property.rooms.forEach(r => {
+    const room = document.createElement('div');
+    room.style.position = 'absolute';
+    room.style.width = (r.w*SCALE)+'px';
+    room.style.height = (r.d*SCALE)+'px';
+    room.style.left = (r.x*SCALE - r.w*SCALE/2)+'px';
+    room.style.top = (r.z*SCALE - r.d*SCALE/2)+'px';
+    room.style.background = 'linear-gradient(155deg, rgba(52,52,61,0.9), rgba(30,30,36,0.85))';
+    room.style.border = `1px solid ${property.accent}`;
+    room.style.borderRadius = '3px';
+    room.style.boxShadow = `0 6px 18px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.02) inset`;
+    room.style.display = 'flex';
+    room.style.alignItems = 'center';
+    room.style.justifyContent = 'center';
+    const tag = document.createElement('span');
+    tag.textContent = r.l;
+    tag.style.cssText = `font-size:9px;letter-spacing:0.06em;text-transform:uppercase;color:${property.accent};background:rgba(10,10,13,0.7);padding:3px 7px;border-radius:999px;white-space:nowrap;transform:rotateX(0deg);`;
+    room.appendChild(tag);
+    scene.appendChild(room);
+  });
+}
+
+/* ============ HERO 3D SCENE ============ */
+function makeCuboid(w,h,d,{fc,fc2,fct,className}={}){
+  const box = document.createElement('div');
+  box.className = 'cuboid' + (className?(' '+className):'');
+  box.style.width = w+'px'; box.style.height = h+'px';
+  if(fc) box.style.setProperty('--fc', fc);
+  if(fc2) box.style.setProperty('--fc2', fc2);
+  if(fct) box.style.setProperty('--fct', fct);
+  const faces = [
+    {cls:'front', w, h, t:`translateZ(${d/2}px)`},
+    {cls:'back', w, h, t:`translateZ(${-d/2}px) rotateY(180deg)`},
+    {cls:'right', w:d, h, t:`translateX(${w/2}px) rotateY(90deg)`},
+    {cls:'left', w:d, h, t:`translateX(${-w/2}px) rotateY(-90deg)`},
+    {cls:'top', w, h:d, t:`translateY(${-h/2}px) rotateX(90deg)`},
+  ];
+  faces.forEach(f => {
+    const el = document.createElement('div');
+    el.className = 'face ' + f.cls;
+    el.style.width = f.w+'px'; el.style.height = f.h+'px';
+    el.style.left = (w-f.w)/2 + 'px'; el.style.top = (h-f.h)/2 + 'px';
+    el.style.transform = f.t;
+    box.appendChild(el);
+  });
+  return box;
+}
+
+/* ============ SHARED HOUSE-MODEL ENGINE ============
+   Used by the hero, every property card, the modal's Exterior tab,
+   and the Dream Home builder — one parametric model, four archetypes.
+   (PALETTES / FOOTPRINTS / STYLE_BUILDERS / HOUSE_CONFIGS are declared
+   earlier, above the property grid, since that section runs first and
+   calls buildHouseModel() immediately.) */
+function put(scene, el, x, y, z, extra){
+  el.style.transform = `translate3d(${x}px, ${y}px, ${z}px)${extra?(' '+extra):''}`;
+  scene.appendChild(el);
+  return el;
+}
+function goldBar(scene, w, x, y, z, extra){
+  const bar = document.createElement('div');
+  bar.className = 'gold-edge';
+  bar.style.height = '2px';
+  bar.style.width = w+'px';
+  return put(scene, bar, x, y, z, extra);
+}
+function glassPlane(scene, w, h, x, y, z, pal, extra){
+  const g = document.createElement('div');
+  g.className = 'cuboid face glass';
+  g.style.width = w+'px'; g.style.height = h+'px';
+  // window mullions (grid of thin frame lines) over a warm-interior / cool-sky split tint
+  g.style.background = `
+    repeating-linear-gradient(90deg, rgba(18,14,8,0.5) 0 2px, transparent 2px 30%),
+    repeating-linear-gradient(0deg, rgba(18,14,8,0.5) 0 2px, transparent 2px 50%),
+    linear-gradient(155deg, rgba(255,205,140,0.28), ${pal.glass} 55%, rgba(50,60,68,0.14))
+  `;
+  g.style.border = '1px solid rgba(212,175,106,0.4)';
+  return put(scene, g, x, y, z, extra);
+}
+
+function buildVilla(scene, pal, s, stories){
+  const baseW = 260*s, baseD = 150*s, floorH = 70;
+  put(scene, makeCuboid(baseW+70, 20, baseD+40, {fc:pal.fc2, fc2:'#141417', fct:pal.fc}), -baseW/2-35, 40, -baseD/2-20);
+  let y = -18, w = baseW, d = baseD;
+  const n = Math.max(1, stories);
+  for(let i=0;i<n;i++){
+    put(scene, makeCuboid(w, floorH, d, {fc:pal.fc, fc2:pal.fc2, fct:pal.fct}), -w/2+10, y-floorH, -d/2+30);
+    y -= (floorH+4); w -= 26*s; d -= 12*s;
+  }
+  const capW = baseW*0.5, capD = baseD*0.55;
+  put(scene, makeCuboid(capW, 56, capD, {fc:pal.fct, fc2:pal.fc2, fct:pal.fc}), baseW*0.12, y-56, -baseD*0.28);
+  put(scene, makeCuboid(baseW+20, 6, baseD+10, {fc:'#0e0e11', fc2:'#0e0e11', fct:'#18181c'}), -baseW/2-10, y-6, -baseD/2-5);
+  glassPlane(scene, baseW*0.82, 58, -baseW*0.41+10, -34, baseD/2+32, pal);
+  goldBar(scene, baseW+20, -baseW/2-10, y-8, baseD/2+7);
+  return { w: baseW+70, d: baseD+40, topY: y-8, frontZ: baseD/2+32 };
+}
+
+function buildTower(scene, pal, s, stories){
+  const baseW = 130*s, baseD = 130*s, floorH = 62;
+  put(scene, makeCuboid(baseW+50, 20, baseD+50, {fc:pal.fc2, fc2:'#141417', fct:pal.fc}), -baseW/2-25, 40, -baseD/2-25);
+  const n = Math.max(4, stories+3);
+  let y = -18;
+  for(let i=0;i<n;i++){
+    put(scene, makeCuboid(baseW, floorH, baseD, {fc: i%2 ? pal.fct : pal.fc, fc2:pal.fc2, fct:pal.fct}), -baseW/2, y-floorH, -baseD/2);
+    y -= (floorH+4);
+  }
+  const capW = baseW*0.7;
+  put(scene, makeCuboid(capW, 26, capW, {fc:pal.fct, fc2:pal.fc2, fct:pal.fc}), -capW/2, y-26, -capW/2);
+  glassPlane(scene, baseW*0.9, (n*(floorH+4))-10, -baseW*0.45, -18-(n*(floorH+4))+10, baseD/2+2, pal);
+  goldBar(scene, capW+10, -capW/2-5, y-28, -capW/2-5);
+  return { w:baseW+50, d:baseD+50, topY:y-28, frontZ: baseD/2+2 };
+}
+
+function buildLodge(scene, pal, s, stories){
+  const baseW = 240*s, baseD = 140*s, wallH = 64;
+  put(scene, makeCuboid(baseW+40, 18, baseD+30, {fc:pal.fc2, fc2:'#141417', fct:pal.fc}), -baseW/2-20, 40, -baseD/2-15);
+  put(scene, makeCuboid(baseW, wallH, baseD, {fc:pal.fc, fc2:pal.fc2, fct:pal.fct}), -baseW/2, -wallH, -baseD/2);
+  const wings = Math.max(0, stories-1);
+  for(let i=0;i<wings;i++){
+    const ww = baseW*0.4;
+    put(scene, makeCuboid(ww, wallH*0.8, baseD*0.7, {fc:pal.fct, fc2:pal.fc2, fct:pal.fc}), baseW/2+6+i*(ww+8), -wallH*0.8, -baseD*0.35);
+  }
+  put(scene, makeCuboid(baseW+24, 8, baseD*0.62, {fc:pal.fct, fc2:pal.fc2, fct:pal.fct}), -baseW/2-12, -wallH-46, -baseD*0.34, 'rotateX(28deg)');
+  put(scene, makeCuboid(baseW+24, 8, baseD*0.62, {fc:pal.fc, fc2:pal.fc2, fct:pal.fct}), -baseW/2-12, -wallH-46, baseD*0.34+8, 'rotateX(-28deg)');
+  put(scene, makeCuboid(14, 50, 14, {fc:pal.fc2, fc2:'#141417', fct:pal.fct}), baseW*0.22, -wallH-96, -baseD*0.05);
+  goldBar(scene, baseW+10, -baseW/2-5, -wallH-2, -baseD/2-2);
+  return { w:baseW+40, d:baseD+30, topY:-wallH-96, frontZ: baseD/2+8 };
+}
+
+function buildPavilion(scene, pal, s, stories){
+  const baseW = 300*s, baseD = 130*s, levelH = 44;
+  put(scene, makeCuboid(baseW+50, 16, baseD+40, {fc:pal.fc2, fc2:'#141417', fct:pal.fc}), -baseW/2-25, 30, -baseD/2-20);
+  let y = -14, w = baseW, d = baseD;
+  const n = Math.max(1, stories);
+  for(let i=0;i<n;i++){
+    const x = -w/2 - i*18*s;
+    put(scene, makeCuboid(w, levelH, d, {fc:pal.fc, fc2:pal.fc2, fct:pal.fct}), x, y-levelH, -d/2);
+    glassPlane(scene, w*0.9, levelH-10, x+w*0.05, y-levelH+5, d/2+1, pal);
+    y -= (levelH+3); w -= 14*s;
+  }
+  put(scene, makeCuboid(baseW+40, 6, baseD+30, {fc:'#0e0e11', fc2:'#0e0e11', fct:'#18181c'}), -baseW/2-20-((n-1)*18*s)/2, y-6, -baseD/2-15);
+  goldBar(scene, baseW+30, -baseW/2-15, y-8, -baseD/2-15);
+  return { w:baseW+50, d:baseD+40, topY:y-8, frontZ: baseD/2+1 };
+}
+
+function buildAddon(scene, name, pal, box){
+  if(name==='pool'){
+    const pool = document.createElement('div');
+    pool.style.cssText = `position:absolute;width:${box.w*0.65}px;height:${box.d*0.5}px;border-radius:6px;background:linear-gradient(160deg, rgba(120,190,210,0.5), rgba(30,70,85,0.35));border:1px solid rgba(212,175,106,0.4);box-shadow:0 0 30px rgba(120,190,210,0.25);`;
+    put(scene, pool, -box.w*0.32, 58, box.frontZ+30);
+  } else if(name==='guesthouse'){
+    put(scene, makeCuboid(80, 40, 70, {fc:pal.fc, fc2:pal.fc2, fct:pal.fct}), box.w/2+30, -30, -box.d*0.1);
+  } else if(name==='garden'){
+    const g = document.createElement('div');
+    g.style.cssText = `position:absolute;width:${box.w*0.55}px;height:${box.d*0.4}px;border-radius:4px;background:linear-gradient(160deg, rgba(110,150,90,0.55), rgba(40,60,35,0.4));border:1px solid rgba(212,175,106,0.3);`;
+    put(scene, g, -box.w*0.27, box.topY-6, -box.d*0.15);
+  } else if(name==='theater'){
+    put(scene, makeCuboid(70, 50, 90, {fc:pal.fc2, fc2:'#141417', fct:pal.fc}), -box.w/2-90, -25, box.d*0.15);
+  } else if(name==='solar'){
+    const sp = document.createElement('div');
+    sp.style.cssText = `position:absolute;width:${box.w*0.7}px;height:${box.d*0.5}px;background:repeating-linear-gradient(45deg, #14212b 0 8px, #1c2f3c 8px 16px);border:1px solid rgba(199,211,220,0.4);opacity:0.9;`;
+    put(scene, sp, -box.w*0.35, box.topY-4, -box.d*0.1);
+  }
+}
+
+function addLandscape(scene, box){
+  const gw = box.w*2.5, gd = box.d*2.5;
+  const ground = document.createElement('div');
+  ground.style.cssText = `position:absolute;width:${gw}px;height:${gd}px;border-radius:50%;
+    background:radial-gradient(closest-side, rgba(70,102,56,0.85) 0%, rgba(38,56,32,0.5) 60%, transparent 100%);`;
+  put(scene, ground, -gw/2, 58, -gd/2);
+
+  const shadow = document.createElement('div');
+  shadow.style.cssText = `position:absolute;width:${box.w*0.9}px;height:${box.d*0.7}px;border-radius:50%;
+    background:radial-gradient(closest-side, rgba(0,0,0,0.5), transparent 75%);`;
+  put(scene, shadow, -box.w*0.45, 60, -box.d*0.35);
+
+  const spots = [
+    { x:-box.w*0.62, z:box.d*0.5, s:1 }, { x:box.w*0.58, z:box.d*0.46, s:0.85 },
+    { x:-box.w*0.46, z:-box.d*0.56, s:0.7 }, { x:box.w*0.5, z:-box.d*0.5, s:0.95 },
+  ];
+  spots.forEach(spot => {
+    const size = 24*spot.s;
+    const bush = document.createElement('div');
+    bush.style.cssText = `position:absolute;width:${size}px;height:${size*0.8}px;border-radius:48% 48% 42% 42%;
+      background:radial-gradient(closest-side, rgba(66,96,52,0.95), rgba(28,42,22,0.9));box-shadow:0 4px 8px rgba(0,0,0,0.4);`;
+    put(scene, bush, spot.x, 46, spot.z);
+  });
+}
+
+function buildHouseModel(scene, opts){
+  scene.innerHTML = '';
+  const pal = PALETTES[opts.palette] || PALETTES.gold;
+  const s = FOOTPRINTS[opts.footprint] ?? 1;
+  const builder = STYLE_BUILDERS[opts.style] || buildVilla;
+  const box = builder(scene, pal, s, opts.stories || 1);
+  (opts.addons||[]).forEach(a => buildAddon(scene, a, pal, box));
+  if (opts.ground !== false) addLandscape(scene, box);
+}
+
+const heroScene = document.getElementById('hero-scene');
+const heroStage = document.getElementById('hero-stage');
+if (heroScene && window.matchMedia('(min-width: 761px)').matches) {
+  buildHouseModel(heroScene, { style:'villa', palette:'gold', stories:2, footprint:'large', addons:['pool','garden'] });
+
+  [
+    {w:96,h:128,x:-300,y:-150,z:-60,rz:-4,delay:'0s'},
+    {w:82,h:112,x:260,y:-95,z:95,rz:5,delay:'1.4s'},
+    {w:64,h:88,x:40,y:-240,z:-170,rz:-3,delay:'2.6s'},
+  ].forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'float-card';
+    card.style.width = c.w+'px'; card.style.height = c.h+'px';
+    card.style.setProperty('--rz', c.rz+'deg');
+    card.style.animationDelay = c.delay;
+    card.style.transform = `translate3d(${c.x}px, ${c.y}px, ${c.z}px) rotateZ(${c.rz}deg)`;
+    heroScene.appendChild(card);
+  });
+
+  let targetRy = -18, targetRx = 6, curRy = -18, curRx = 6;
+  heroStage.addEventListener('mousemove', (e) => {
+    const r = heroStage.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    targetRy = -18 + px * 26;
+    targetRx = 6 - py * 10;
+  });
+  function raf(){
+    curRy += (targetRy-curRy)*0.045;
+    curRx += (targetRx-curRx)*0.045;
+    heroScene.style.transform = `translate3d(0,0,0) rotateX(${curRx}deg) rotateY(${curRy}deg)`;
+    requestAnimationFrame(raf);
+  }
+  raf();
+}
+
+/* ============ VALUATION CALCULATOR ============ */
+const RATE = { villa:1450, penthouse:1950, estate:1250, townhouse:1650 };
+const COND_MULT = { 'needs':0.82, 'good':1, 'excellent':1.14, 'new':1.28 };
+const FEATURE_PREMIUM = { pool:380000, sea:950000, smart:210000, wine:260000, guest:420000, dock:610000 };
+const PROPERTY_TYPES = [
+  {v:'villa', l:'Villa', ic:'<path d="M4 12L12 4l8 8M6 10v10h12V10"/>'},
+  {v:'penthouse', l:'Penthouse', ic:'<path d="M4 21V9l4-3 4 3v12M12 21V6l4-3 4 3v15"/>'},
+  {v:'estate', l:'Estate', ic:'<path d="M4 21V11l8-6 8 6v10M9 21v-6h6v6"/><path d="M12 2v3"/>'},
+  {v:'townhouse', l:'Townhouse', ic:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'},
+];
+const CONDITIONS = [
+  {v:'needs', l:'Needs Renovation', h:'Original condition'},
+  {v:'good', l:'Good', h:'Well maintained'},
+  {v:'excellent', l:'Excellent', h:'Recently updated'},
+  {v:'new', l:'New Build', h:'Move-in ready'},
+];
+const FEATURES = [
+  {v:'pool', l:'Pool'}, {v:'sea', l:'Sea / Water View'}, {v:'smart', l:'Smart Home System'},
+  {v:'wine', l:'Wine Cellar'}, {v:'guest', l:'Guest House'}, {v:'dock', l:'Private Dock'}
+];
+const STEP_LABELS = ['Location','Details','Condition','Estimate'];
+
+let val = { address:'', city:'', propertyType:'villa', bedrooms:4, bathrooms:3, sqft:4500, condition:'excellent', features:[] };
+let step = 0;
+
+function estimate(){
+  const base = val.sqft * RATE[val.propertyType] * COND_MULT[val.condition];
+  const roomAdj = Math.max(0,val.bedrooms-3)*180000 + Math.max(0,val.bathrooms-3)*90000;
+  const featAdj = val.features.reduce((s,f)=>s+(FEATURE_PREMIUM[f]||0),0);
+  const mid = Math.round((base+roomAdj+featAdj)/10000)*10000;
+  return { low: Math.round(mid*0.93/10000)*10000, high: Math.round(mid*1.08/10000)*10000, mid, ppsf: Math.round(mid/Math.max(val.sqft,1)) };
+}
+
+function renderSteps(){
+  document.getElementById('val-steps').innerHTML = STEP_LABELS.map((l,i)=>`
+    <div class="step ${i<step?'done':i===step?'active':''}">
+      <div class="dot">${i<step?'&#10003;':i+1}</div>
+      <span class="label">${l}</span>
+      ${i<STEP_LABELS.length-1?'<div class="bar"></div>':''}
+    </div>`).join('');
+}
+
+function renderStep(){
+  renderSteps();
+  const body = document.getElementById('val-body');
+  const actions = document.getElementById('val-actions');
+  if (step === 0){
+    body.innerHTML = `
+      <div class="field"><label>Street Address</label><input type="text" id="in-address" placeholder="1200 Cielo Drive" value="${val.address}"></div>
+      <div class="field"><label>City / Region</label><input type="text" id="in-city" placeholder="Bel Air, California" value="${val.city}"></div>
+    `;
+    document.getElementById('in-address').addEventListener('input', e=>{ val.address=e.target.value; syncContinue(); });
+    document.getElementById('in-city').addEventListener('input', e=>{ val.city=e.target.value; syncContinue(); });
+  } else if (step === 1){
+    body.innerHTML = `
+      <label style="display:block;font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:0.75rem;">Property Type</label>
+      <div class="choice-grid cols-4" id="type-grid">${PROPERTY_TYPES.map(t=>`
+        <div class="choice ${val.propertyType===t.v?'picked':''}" data-v="${t.v}">
+          <svg class="icon" viewBox="0 0 24 24">${t.ic}</svg>${t.l}
+        </div>`).join('')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;">
+        <div><label style="display:block;font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:0.6rem;">Bedrooms</label>
+          <div class="num-stepper"><button data-d="-1" data-f="bedrooms">&minus;</button><span class="val" id="v-bedrooms">${val.bedrooms}</span><button data-d="1" data-f="bedrooms">+</button></div></div>
+        <div><label style="display:block;font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:0.6rem;">Bathrooms</label>
+          <div class="num-stepper"><button data-d="-1" data-f="bathrooms">&minus;</button><span class="val" id="v-bathrooms">${val.bathrooms}</span><button data-d="1" data-f="bathrooms">+</button></div></div>
+      </div>
+      <div style="margin-top:2rem;">
+        <div class="range-row"><span>Living Area</span><b id="sqft-label">${val.sqft.toLocaleString()} sqft</b></div>
+        <input type="range" min="800" max="25000" step="100" value="${val.sqft}" id="in-sqft">
+      </div>
+    `;
+    document.getElementById('type-grid').addEventListener('click', e=>{
+      const el = e.target.closest('.choice'); if(!el) return;
+      val.propertyType = el.dataset.v; renderStep();
+    });
+    body.querySelectorAll('.num-stepper button').forEach(b=>b.addEventListener('click', ()=>{
+      const f=b.dataset.f, d=+b.dataset.d;
+      val[f] = Math.max(1, Math.min(12, val[f]+d));
+      document.getElementById('v-'+f).textContent = val[f];
+    }));
+    document.getElementById('in-sqft').addEventListener('input', e=>{
+      val.sqft = +e.target.value; document.getElementById('sqft-label').textContent = val.sqft.toLocaleString()+' sqft';
+    });
+  } else if (step === 2){
+    body.innerHTML = `
+      <label style="display:block;font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:0.75rem;">Property Condition</label>
+      <div class="choice-grid cols-2" id="cond-grid">${CONDITIONS.map(c=>`
+        <div class="choice choice-left ${val.condition===c.v?'picked':''}" data-v="${c.v}">
+          <span>${c.l}</span><span class="hint">${c.h}</span>
+        </div>`).join('')}</div>
+      <label style="display:block;font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin:2rem 0 0.75rem;">Notable Features</label>
+      <div class="choice-grid cols-3" id="feat-grid">${FEATURES.map(f=>`
+        <div class="choice ${val.features.includes(f.v)?'picked':''}" data-v="${f.v}">${f.l}</div>`).join('')}</div>
+    `;
+    document.getElementById('cond-grid').addEventListener('click', e=>{
+      const el = e.target.closest('.choice'); if(!el) return;
+      val.condition = el.dataset.v; renderStep();
+    });
+    document.getElementById('feat-grid').addEventListener('click', e=>{
+      const el = e.target.closest('.choice'); if(!el) return;
+      const v = el.dataset.v;
+      val.features = val.features.includes(v) ? val.features.filter(x=>x!==v) : [...val.features, v];
+      el.classList.toggle('picked');
+    });
+  } else {
+    const r = estimate();
+    body.innerHTML = `
+      <div class="result">
+        <div class="spark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z"/></svg></div>
+        <p class="eyebrow" style="justify-content:center;">Estimated Market Value</p>
+        <p class="range">${fmtMoney(r.low)}<span class="dash">&ndash;</span>${fmtMoney(r.high)}</p>
+        <p class="sub">Approximately <b>${fmtMoney(r.ppsf)}</b> per square foot for ${val.address || 'this property'}${val.city ? ', '+val.city : ''}.</p>
+        <div class="result-actions">
+          <button class="btn btn-gold">Speak to an Advisor
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg>
+          </button>
+          <button class="btn btn-ghost" id="btn-restart">Start Over</button>
+        </div>
+        <p class="fine">This estimate is generated instantly from comparable market data and is not a formal appraisal.</p>
+      </div>
+    `;
+    document.getElementById('btn-restart').addEventListener('click', ()=>{ step=0; renderStep(); });
+  }
+  renderActions();
+}
+
+function syncContinue(){
+  const btn = document.getElementById('btn-continue');
+  if (btn) btn.disabled = !(val.address.trim().length>2 && val.city.trim().length>1);
+}
+
+function renderActions(){
+  const actions = document.getElementById('val-actions');
+  if (step === 3){ actions.innerHTML = ''; return; }
+  const canContinue = step === 0 ? (val.address.trim().length>2 && val.city.trim().length>1) : true;
+  actions.innerHTML = `
+    <button class="btn btn-ghost" id="btn-back" style="${step===0?'visibility:hidden;':''}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg> Back
+    </button>
+    <button class="btn btn-gold" id="btn-continue" ${canContinue?'':'disabled'}>
+      ${step===2?'Get Estimate':'Continue'}
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  `;
+  document.getElementById('btn-back').addEventListener('click', ()=>{ step=Math.max(0,step-1); renderStep(); });
+  document.getElementById('btn-continue').addEventListener('click', ()=>{ step=Math.min(3,step+1); renderStep(); });
+}
+renderStep();
+
+/* ============ DREAM HOME BUILDER ============ */
+const STYLE_OPTIONS = [
+  { v:'villa', l:'Modern Villa', ic:'<path d="M4 12L12 4l8 8M6 10v10h12V10"/>' },
+  { v:'tower', l:'Penthouse Tower', ic:'<path d="M8 21V7l4-4 4 4v14M11 21V11h2v10"/>' },
+  { v:'lodge', l:'Alpine Lodge', ic:'<path d="M3 20l9-14 9 14z"/><path d="M9 20v-6h6v6"/>' },
+  { v:'pavilion', l:'Glass Pavilion', ic:'<rect x="4" y="10" width="16" height="9"/><path d="M2 10l10-5 10 5"/>' },
+];
+const PALETTE_OPTIONS = [
+  { v:'gold', l:'Charcoal & Gold', c1:'#3a3a44', c2:'#d4af6a' },
+  { v:'ivory', l:'Ivory Stone', c1:'#cbc3b0', c2:'#a9823e' },
+  { v:'timber', l:'Obsidian Timber', c1:'#2c2018', c2:'#c98a4b' },
+  { v:'platinum', l:'Glass & Platinum', c1:'#3d4650', c2:'#c7d3dc' },
+];
+const FOOTPRINT_OPTIONS = [ { v:'small', l:'Compact' }, { v:'medium', l:'Estate' }, { v:'large', l:'Grand' } ];
+const ADDON_OPTIONS = [
+  { v:'pool', l:'Infinity Pool' }, { v:'guesthouse', l:'Guest House' }, { v:'garden', l:'Rooftop Garden' },
+  { v:'theater', l:'Screening Room' }, { v:'solar', l:'Solar Roof' },
+];
+
+let dream = { style:'villa', palette:'gold', stories:1, footprint:'medium', addons:['pool'] };
+let dreamOrbit = null;
+
+function dreamSummary(){
+  const styleLabel = STYLE_OPTIONS.find(o=>o.v===dream.style).l;
+  const paletteLabel = PALETTE_OPTIONS.find(o=>o.v===dream.palette).l;
+  const footLabel = FOOTPRINT_OPTIONS.find(o=>o.v===dream.footprint).l;
+  const addonLabels = dream.addons.map(a=>ADDON_OPTIONS.find(o=>o.v===a).l);
+  const addonText = addonLabels.length ? ' featuring ' + addonLabels.join(', ') + '.' : '.';
+  return `<strong>${dream.stories}-story ${styleLabel}</strong> &middot; ${paletteLabel} &middot; ${footLabel} footprint${addonText}`;
+}
+
+function renderDream(){
+  document.getElementById('dream-style').innerHTML = STYLE_OPTIONS.map(o=>`
+    <div class="choice ${dream.style===o.v?'picked':''}" data-f="style" data-v="${o.v}">
+      <svg class="icon" viewBox="0 0 24 24">${o.ic}</svg>${o.l}
+    </div>`).join('');
+  document.getElementById('dream-palette').innerHTML = PALETTE_OPTIONS.map(o=>`
+    <div class="swatch-choice ${dream.palette===o.v?'picked':''}" data-f="palette" data-v="${o.v}">
+      <div class="swatch" style="background:linear-gradient(135deg, ${o.c1}, ${o.c2});"></div>
+      <span>${o.l}</span>
+    </div>`).join('');
+  document.getElementById('dream-footprint').innerHTML = FOOTPRINT_OPTIONS.map(o=>`
+    <div class="choice ${dream.footprint===o.v?'picked':''}" data-f="footprint" data-v="${o.v}">${o.l}</div>`).join('');
+  document.getElementById('dream-stories-val').textContent = dream.stories;
+  document.getElementById('dream-addons').innerHTML = ADDON_OPTIONS.map(o=>`
+    <div class="choice ${dream.addons.includes(o.v)?'picked':''}" data-f="addon" data-v="${o.v}">${o.l}</div>`).join('');
+  document.getElementById('dream-summary').innerHTML = dreamSummary();
+
+  buildHouseModel(dreamScene, dream);
+}
+
+const dreamScene = document.getElementById('dream-scene');
+renderDream();
+dreamOrbit = createOrbitViewport(document.getElementById('dream-viewport'), dreamScene, { rx:14, ry:-30, zoom:1, minZoom:0.6, maxZoom:1.6 });
+
+document.getElementById('dream-controls').addEventListener('click', (e) => {
+  const stepperBtn = e.target.closest('#dream-stories-wrap button');
+  if (stepperBtn) {
+    dream.stories = Math.max(1, Math.min(4, dream.stories + (+stepperBtn.dataset.d)));
+    renderDream();
+    return;
+  }
+  const el = e.target.closest('[data-f]');
+  if (!el) return;
+  const f = el.dataset.f, v = el.dataset.v;
+  if (f === 'addon') {
+    dream.addons = dream.addons.includes(v) ? dream.addons.filter(x=>x!==v) : [...dream.addons, v];
+  } else {
+    dream[f] = v;
+  }
+  renderDream();
+});
+
+/* ============ DREAM HOME GENERATOR (preference quiz) ============ */
+const GENIE_STYLE_Q = [
+  { v:'villa', l:'A dramatic modern silhouette' },
+  { v:'tower', l:'Sweeping skyline views' },
+  { v:'lodge', l:'A cozy retreat in the mountains' },
+  { v:'pavilion', l:'Walls of glass and total serenity' },
+];
+const GENIE_SCALE_Q = [
+  { v:'small', l:'Just for us', hint:'Intimate & efficient', stories:1 },
+  { v:'medium', l:'Room to grow', hint:'A proper family estate', stories:2 },
+  { v:'large', l:'Go big', hint:'Nothing held back', stories:3 },
+];
+const GENIE_STEP_LABELS = ['Style', 'Palette', 'Scale', 'Amenities', 'Reveal'];
+const STYLE_TO_RATE_TYPE = { villa:'villa', tower:'penthouse', lodge:'estate', pavilion:'townhouse' };
+const GENIE_FOOTPRINT_SQFT = { small: 3200, medium: 5200, large: 8600 };
+const GENIE_ADDON_PREMIUM = { pool:380000, guesthouse:420000, garden:210000, theater:260000, solar:150000 };
+const GENIE_NAME_ADJ = { gold:'Golden', ivory:'Ivory', timber:'Ember', platinum:'Meridian' };
+const GENIE_NAME_NOUN = { villa:'Villa', tower:'Spire', lodge:'Lodge', pavilion:'Pavilion' };
+
+function genieEstimate(cfg){
+  const sqft = GENIE_FOOTPRINT_SQFT[cfg.footprint] + (cfg.stories - 1) * 1800;
+  const rate = RATE[STYLE_TO_RATE_TYPE[cfg.style]];
+  const addonSum = cfg.addons.reduce((sum, a) => sum + (GENIE_ADDON_PREMIUM[a] || 0), 0);
+  const price = Math.round((sqft * rate + addonSum) / 50000) * 50000;
+  return { sqft, price };
+}
+function genieName(cfg){
+  return `The ${GENIE_NAME_ADJ[cfg.palette]} ${GENIE_NAME_NOUN[cfg.style]}`;
+}
+
+let genieStep = 0;
+let genieAnswers = { style: null, palette: null, footprint: null, stories: 1, addons: [] };
+let genieOrbit = null;
+
+function genieStepsBar(){
+  document.getElementById('genie-steps').innerHTML = GENIE_STEP_LABELS.map((l, i) => `
+    <div class="step ${i < genieStep ? 'done' : i === genieStep ? 'active' : ''}">
+      <div class="dot">${i < genieStep ? '&#10003;' : i + 1}</div>
+      <span class="label">${l}</span>
+      ${i < GENIE_STEP_LABELS.length - 1 ? '<div class="bar"></div>' : ''}
+    </div>`).join('');
+}
+
+function genieBackButton(){
+  return `<button type="button" class="btn btn-ghost" id="genie-back"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg> Back</button>`;
+}
+function wireGenieBack(){
+  const back = document.getElementById('genie-back');
+  if (back) back.addEventListener('click', () => { genieStep = Math.max(0, genieStep - 1); renderGenie(); });
+}
+
+function renderGenie(){
+  genieStepsBar();
+  const body = document.getElementById('genie-body');
+  const actions = document.getElementById('genie-actions');
+
+  if (genieStep === 0) {
+    body.innerHTML = `
+      <p class="genie-q-title">What&rsquo;s the heart of your ideal home?</p>
+      <div class="choice-grid cols-2" id="genie-opts">${GENIE_STYLE_Q.map(o => `
+        <div class="choice choice-left" data-v="${o.v}">${o.l}</div>`).join('')}</div>`;
+    body.querySelector('#genie-opts').addEventListener('click', (e) => {
+      const el = e.target.closest('.choice'); if (!el) return;
+      genieAnswers.style = el.dataset.v; genieStep = 1; renderGenie();
+    });
+    actions.innerHTML = '';
+  } else if (genieStep === 1) {
+    body.innerHTML = `
+      <p class="genie-q-title">Which materials speak to you?</p>
+      <div class="choice-grid cols-4" id="genie-opts">${PALETTE_OPTIONS.map(o => `
+        <div class="swatch-choice" data-v="${o.v}">
+          <div class="swatch" style="background:linear-gradient(135deg, ${o.c1}, ${o.c2});"></div>
+          <span>${o.l}</span>
+        </div>`).join('')}</div>`;
+    body.querySelector('#genie-opts').addEventListener('click', (e) => {
+      const el = e.target.closest('.swatch-choice'); if (!el) return;
+      genieAnswers.palette = el.dataset.v; genieStep = 2; renderGenie();
+    });
+    actions.innerHTML = genieBackButton();
+    wireGenieBack();
+  } else if (genieStep === 2) {
+    body.innerHTML = `
+      <p class="genie-q-title">How much room do you need?</p>
+      <div class="choice-grid cols-3" id="genie-opts">${GENIE_SCALE_Q.map(o => `
+        <div class="choice choice-left" data-v="${o.v}" data-stories="${o.stories}">
+          <span>${o.l}</span><span class="hint">${o.hint}</span>
+        </div>`).join('')}</div>`;
+    body.querySelector('#genie-opts').addEventListener('click', (e) => {
+      const el = e.target.closest('.choice'); if (!el) return;
+      genieAnswers.footprint = el.dataset.v; genieAnswers.stories = +el.dataset.stories;
+      genieStep = 3; renderGenie();
+    });
+    actions.innerHTML = genieBackButton();
+    wireGenieBack();
+  } else if (genieStep === 3) {
+    body.innerHTML = `
+      <p class="genie-q-title">How do you like to unwind? <span class="genie-hint">(choose up to 3)</span></p>
+      <div class="choice-grid cols-3" id="genie-opts">${ADDON_OPTIONS.map(o => `
+        <div class="choice ${genieAnswers.addons.includes(o.v) ? 'picked' : ''}" data-v="${o.v}">${o.l}</div>`).join('')}</div>`;
+    body.querySelector('#genie-opts').addEventListener('click', (e) => {
+      const el = e.target.closest('.choice'); if (!el) return;
+      const v = el.dataset.v;
+      if (genieAnswers.addons.includes(v)) {
+        genieAnswers.addons = genieAnswers.addons.filter(x => x !== v);
+      } else {
+        if (genieAnswers.addons.length >= 3) { showToast('Choose up to 3 amenities.'); return; }
+        genieAnswers.addons = [...genieAnswers.addons, v];
+      }
+      renderGenie();
+    });
+    actions.innerHTML = genieBackButton() +
+      `<button type="button" class="btn btn-gold" id="genie-generate">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z"/></svg>
+        Generate My Home
+      </button>`;
+    wireGenieBack();
+    document.getElementById('genie-generate').addEventListener('click', () => { genieStep = 4; renderGenie(); });
+  } else {
+    const cfg = { style: genieAnswers.style, palette: genieAnswers.palette, footprint: genieAnswers.footprint, stories: genieAnswers.stories, addons: genieAnswers.addons };
+    const { sqft, price } = genieEstimate(cfg);
+    body.innerHTML = `
+      <div class="result">
+        <div class="spark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z"/></svg></div>
+        <p class="eyebrow" style="justify-content:center;">Generated For You</p>
+        <p class="range" style="font-size:clamp(1.6rem,4vw,2.2rem);">${genieName(cfg)}</p>
+        <p class="sub">Approximately ${sqft.toLocaleString()} sqft &middot; Estimated from <b>${fmtMoney(price)}</b></p>
+        <div class="fp-viewport viewport-sky" id="genie-viewport" style="height:15rem;margin-top:1.5rem;"><div class="fp-scene" id="genie-scene"></div></div>
+        <p class="fp-hint">Drag to rotate</p>
+        <div class="result-actions">
+          <button type="button" class="btn btn-gold" id="genie-apply">Customize This Design</button>
+          <button type="button" class="btn btn-ghost" id="genie-restart">Start Over</button>
+        </div>
+      </div>`;
+
+    const genieScene = document.getElementById('genie-scene');
+    buildHouseModel(genieScene, cfg);
+    if (genieOrbit) genieOrbit.cleanup();
+    genieOrbit = createOrbitViewport(document.getElementById('genie-viewport'), genieScene, { rx: 14, ry: -30, zoom: 0.85, minZoom: 0.55, maxZoom: 1.3 });
+
+    document.getElementById('genie-apply').addEventListener('click', () => {
+      dream = { ...cfg };
+      renderDream();
+      closeGenie();
+      scrollToId('dream');
+      showToast('Applied to the builder below — tweak anything you like.');
+    });
+    document.getElementById('genie-restart').addEventListener('click', () => {
+      genieAnswers = { style: null, palette: null, footprint: null, stories: 1, addons: [] };
+      genieStep = 0; renderGenie();
+    });
+    actions.innerHTML = '';
+  }
+}
+
+function openGenie(){
+  genieStep = 0;
+  genieAnswers = { style: null, palette: null, footprint: null, stories: 1, addons: [] };
+  renderGenie();
+  document.getElementById('genie-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeGenie(){
+  document.getElementById('genie-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+  if (genieOrbit) { genieOrbit.cleanup(); genieOrbit = null; }
+}
+document.getElementById('genie-backdrop').addEventListener('click', (e) => {
+  if (e.target.id === 'genie-backdrop') closeGenie();
+});
+
+/* ============ MISC: header scroll, mobile nav, reveal-on-scroll ============ */
+const headerEl = document.getElementById('site-header');
+window.addEventListener('scroll', () => { headerEl.classList.toggle('scrolled', window.scrollY > 24); }, {passive:true});
+function scrollToId(id){ document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+function toggleMobileNav(){ const el = document.getElementById('mobile-nav'); el.style.display = el.style.display==='none' ? 'block' : 'none'; }
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
