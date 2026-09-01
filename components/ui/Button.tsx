@@ -9,10 +9,10 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  gold: "bg-gold-400 text-charcoal-950 hover:bg-gold-300 shadow-[0_0_30px_-8px_rgba(212,175,106,0.7)]",
+  gold: "bg-ink text-cream hover:bg-gold-500 hover:text-cream",
   outline:
-    "border border-gold-400/50 text-ivory-100 hover:border-gold-300 hover:bg-gold-400/10",
-  ghost: "text-ivory-100/80 hover:text-gold-300",
+    "border border-ink/25 text-ink hover:border-gold-400 hover:text-gold-700",
+  ghost: "text-ink-soft hover:text-gold-700",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
