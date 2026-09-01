@@ -1,46 +1,68 @@
+import Link from "next/link";
+import { Camera } from "lucide-react";
+import { products } from "@/lib/products";
+
 export function Footer() {
   return (
-    <footer id="contact" className="border-t border-charcoal-700 bg-charcoal-950">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16 grid gap-12 md:grid-cols-4">
+    <footer className="border-t border-ink/10 bg-cream">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-6 py-16 md:grid-cols-4 lg:px-10">
         <div className="md:col-span-2">
-          <span className="font-display text-2xl text-ivory-100">AURA</span>
-          <span className="ml-2 text-[10px] tracking-[0.4em] uppercase text-gold-400">
-            Estates
+          <span className="font-display text-2xl text-ink">MAISON</span>
+          <span className="ml-2 text-[10px] tracking-[0.4em] uppercase text-gold-700">
+            Élan
           </span>
-          <p className="mt-4 max-w-sm text-sm text-charcoal-300 leading-relaxed">
-            A boutique agency representing the world&apos;s most extraordinary
-            residences, for those who consider a home the ultimate work of art.
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-faint">
+            Fine fragrance, composed in small batches from rare and
+            sustainably sourced ingredients.
           </p>
+          <div className="mt-6 grid grid-cols-4 gap-2">
+            {products.map((product) => (
+              <div
+                key={product.slug}
+                className="aspect-square rounded-sm"
+                style={{ background: `${product.accent}22` }}
+                aria-hidden
+              />
+            ))}
+          </div>
         </div>
 
         <div>
-          <h4 className="text-xs uppercase tracking-[0.25em] text-gold-400 mb-4">
-            Concierge
+          <h4 className="mb-4 text-xs uppercase tracking-[0.25em] text-gold-700">
+            Client Care
           </h4>
-          <ul className="space-y-2 text-sm text-charcoal-300">
-            <li>hello@auraestates.com</li>
-            <li>+1 (310) 555-0199</li>
-            <li>By private appointment only</li>
+          <ul className="space-y-2 text-sm text-ink-faint">
+            <li>Shipping &amp; delivery</li>
+            <li>Returns &amp; exchanges</li>
+            <li>Track an order</li>
+            <li>Contact concierge</li>
           </ul>
         </div>
 
         <div>
-          <h4 className="text-xs uppercase tracking-[0.25em] text-gold-400 mb-4">
-            Offices
+          <h4 className="mb-4 text-xs uppercase tracking-[0.25em] text-gold-700">
+            The House
           </h4>
-          <ul className="space-y-2 text-sm text-charcoal-300">
-            <li>Los Angeles</li>
-            <li>New York</li>
-            <li>London</li>
-            <li>Milan</li>
+          <ul className="space-y-2 text-sm text-ink-faint">
+            <li>
+              <Link href="#story" className="hover:text-ink">
+                Our story
+              </Link>
+            </li>
+            <li>hello@maisonelan.com</li>
+            <li>By appointment, Paris</li>
+            <li className="flex items-center gap-2 pt-1">
+              <Camera size={14} />
+              <span>@maisonelan</span>
+            </li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-charcoal-800">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-charcoal-400">
-          <p>© {new Date().getFullYear()} Aura Estates. All rights reserved.</p>
-          <p className="tracking-wide">Redefining Luxury Living</p>
+      <div className="border-t border-ink/10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 text-xs text-ink-faint sm:flex-row lg:px-10">
+          <p>© {new Date().getFullYear()} Maison Élan. All rights reserved.</p>
+          <p className="tracking-wide">Scent, distilled into memory.</p>
         </div>
       </div>
     </footer>

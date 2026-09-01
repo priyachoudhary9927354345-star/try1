@@ -1,60 +1,48 @@
 @import "tailwindcss";
 
 :root {
-  --color-charcoal-950: #08080a;
-  --color-charcoal-900: #0d0d10;
-  --color-charcoal-800: #16161a;
-  --color-charcoal-700: #1f1f25;
-  --color-charcoal-600: #2b2b33;
-  --color-charcoal-500: #45454f;
-  --color-charcoal-400: #6b6b76;
-  --color-charcoal-300: #9a9aa4;
+  --color-cream: #f7f4ef;
+  --color-cream-dim: #efeae1;
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #3a3836;
+  --color-ink-faint: #6f6b64;
 
-  --color-ivory-100: #faf8f3;
-  --color-ivory-200: #f1ede2;
+  --color-gold-100: #efe4cd;
+  --color-gold-300: #cbb384;
+  --color-gold-400: #b89b5e;
+  --color-gold-500: #a5854a;
+  --color-gold-700: #7a6438;
 
-  --color-gold-200: #f0dfae;
-  --color-gold-300: #e6ca85;
-  --color-gold-400: #d4af6a;
-  --color-gold-500: #c9a463;
-  --color-gold-600: #a9823e;
-
-  --background: var(--color-charcoal-950);
-  --foreground: var(--color-ivory-100);
+  --background: var(--color-cream);
+  --foreground: var(--color-ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  --color-charcoal-950: var(--color-charcoal-950);
-  --color-charcoal-900: var(--color-charcoal-900);
-  --color-charcoal-800: var(--color-charcoal-800);
-  --color-charcoal-700: var(--color-charcoal-700);
-  --color-charcoal-600: var(--color-charcoal-600);
-  --color-charcoal-500: var(--color-charcoal-500);
-  --color-charcoal-400: var(--color-charcoal-400);
-  --color-charcoal-300: var(--color-charcoal-300);
+  --color-cream: var(--color-cream);
+  --color-cream-dim: var(--color-cream-dim);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-ink-faint: var(--color-ink-faint);
 
-  --color-ivory-100: var(--color-ivory-100);
-  --color-ivory-200: var(--color-ivory-200);
-
-  --color-gold-200: var(--color-gold-200);
+  --color-gold-100: var(--color-gold-100);
   --color-gold-300: var(--color-gold-300);
   --color-gold-400: var(--color-gold-400);
   --color-gold-500: var(--color-gold-500);
-  --color-gold-600: var(--color-gold-600);
+  --color-gold-700: var(--color-gold-700);
 
   --font-display: var(--font-playfair);
   --font-sans: var(--font-inter);
 
-  --animate-fade-up: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-fade-up: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-drift: drift 14s ease-in-out infinite;
 
   @keyframes fade-up {
     from {
       opacity: 0;
-      transform: translateY(24px);
+      transform: translateY(28px);
     }
     to {
       opacity: 1;
@@ -62,12 +50,13 @@
     }
   }
 
-  @keyframes shimmer {
-    from {
-      background-position: 200% 0;
+  @keyframes drift {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
     }
-    to {
-      background-position: -200% 0;
+    50% {
+      transform: translate3d(0, -14px, 0) scale(1.03);
     }
   }
 }
@@ -84,52 +73,57 @@ body {
 
 ::selection {
   background: var(--color-gold-400);
-  color: var(--color-charcoal-950);
+  color: var(--color-cream);
 }
 
-/* Slim gold-tinted scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-charcoal-950);
+  background: var(--color-cream);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-charcoal-600);
+  background: var(--color-gold-300);
   border-radius: 999px;
-  border: 2px solid var(--color-charcoal-950);
+  border: 2px solid var(--color-cream);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold-600);
-}
-
-.text-gold-gradient {
-  background: linear-gradient(
-    110deg,
-    var(--color-gold-600) 10%,
-    var(--color-gold-200) 35%,
-    var(--color-gold-400) 55%,
-    var(--color-gold-600) 80%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  background: var(--color-gold-500);
 }
 
 .hairline {
+  height: 1px;
   background: linear-gradient(
     90deg,
     transparent,
     var(--color-gold-400) 50%,
     transparent
   );
-  height: 1px;
 }
 
 .glass-panel {
-  background: color-mix(in srgb, var(--color-charcoal-800) 55%, transparent);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid color-mix(in srgb, var(--color-gold-400) 15%, transparent);
+  background: color-mix(in srgb, var(--color-cream) 78%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 8%, transparent);
+}
+
+.underline-reveal {
+  position: relative;
+}
+.underline-reveal::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: right;
+  background: currentColor;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.underline-reveal:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
