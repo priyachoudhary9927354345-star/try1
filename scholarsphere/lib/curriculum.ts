@@ -3,7 +3,7 @@ import { class9 } from "./data/class9";
 import { class10 } from "./data/class10";
 import { class11 } from "./data/class11";
 import { class12 } from "./data/class12";
-import type { SearchEntry } from "./search";
+import type { CompactIndex } from "./search";
 import type {
   Chapter,
   Grade,
@@ -149,33 +149,32 @@ export function countAll() {
 
 /* ---------- Search ---------- */
 
-/** Flat list of every searchable node; served statically at /search-index.json. */
-export function searchEntries(): SearchEntry[] {
-  const out: SearchEntry[] = [];
+/**
+ * Compact search index served statically at /search-index.json. Entries share
+ * context/href prefixes through `groups` to keep the payload small.
+ */
+export function searchIndex(): CompactIndex {
+  const groups: CompactIndex["groups"] = [];
+  const entries: CompactIndex["entries"] = [];
+  const group = (c: string, h: string, g: string) => groups.push([c, h, g]) - 1;
   for (const g of grades) {
+    const gi = group(g.label, `/learn/${g.id}`, g.id);
     for (const s of g.subjects) {
-      out.push({ k: "subject", t: s.name, c: g.label, h: subjectHref(g.id, s.id), g: g.id });
+      entries.push([0, s.name, gi, `/${s.id}`]);
       for (const tb of s.textbooks) {
+        const bi = group(`${g.label} · ${s.name} · ${tb.title}`, subjectHref(g.id, s.id), g.id);
         for (const c of tb.chapters) {
-          out.push({
-            k: "chapter",
-            t: `Ch ${c.number}. ${c.title}`,
-            c: `${g.label} · ${s.name} · ${tb.title}`,
-            h: chapterHref(g.id, s.id, c.id),
-            g: g.id,
-          });
+          entries.push([1, `Ch ${c.number}. ${c.title}`, bi, `/${c.id}`]);
+          const ci = group(`${g.label} · ${s.name} · ${c.title}`, chapterHref(g.id, s.id, c.id), g.id);
           for (const t of c.topics) {
-            const href = topicHref(g.id, s.id, c.id, t.id);
-            out.push({ k: "topic", t: t.title, c: `${g.label} · ${s.name} · ${c.title}`, h: href, g: g.id });
-            for (const st of t.subtopics) {
-              out.push({ k: "subtopic", t: st.title, c: `${g.label} · ${c.title} › ${t.title}`, h: href, g: g.id });
-            }
+            entries.push([2, t.title, ci, `/${t.id}`]);
+            for (const st of t.subtopics) entries.push([3, st.title, ci, `/${t.id}`]);
           }
         }
       }
     }
   }
-  return out;
+  return { groups, entries };
 }
 
 /* ---------- Practice question generation ---------- */

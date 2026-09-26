@@ -7,6 +7,21 @@ export interface SearchEntry {
   g: string; // grade id
 }
 
+/** Wire format: groups are [context, hrefPrefix, grade]; entries are [kind, title, group, hrefSuffix]. */
+export interface CompactIndex {
+  groups: [string, string, string][];
+  entries: [0 | 1 | 2 | 3, string, number, string][];
+}
+
+const KINDS = ["subject", "chapter", "topic", "subtopic"] as const;
+
+export function expandIndex({ groups, entries }: CompactIndex): SearchEntry[] {
+  return entries.map(([k, t, gi, suffix]) => {
+    const [c, h, g] = groups[gi];
+    return { k: KINDS[k], t, c, h: h + suffix, g };
+  });
+}
+
 const KIND_RANK = { subject: 0, chapter: 1, topic: 2, subtopic: 3 };
 
 export function searchIn(

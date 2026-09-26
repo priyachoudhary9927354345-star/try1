@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, FileText, Hash, Layers, Search, X } from "lucide-react";
-import { searchIn, type SearchEntry } from "@/lib/search";
+import { expandIndex, searchIn, type CompactIndex, type SearchEntry } from "@/lib/search";
 
 let indexPromise: Promise<SearchEntry[]> | null = null;
 function loadIndex() {
   indexPromise ??= fetch("/search-index.json")
-    .then((r) => r.json() as Promise<SearchEntry[]>)
+    .then((r) => r.json() as Promise<CompactIndex>)
+    .then(expandIndex)
     .catch(() => {
       indexPromise = null;
       return [];

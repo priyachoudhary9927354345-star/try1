@@ -1,7 +1,7 @@
-import { searchEntries } from "@/lib/curriculum";
+import { searchIndex } from "@/lib/curriculum";
 
 export const dynamic = "force-static";
 
 export function GET() {
-  return Response.json(searchEntries());
+  return Response.json(searchIndex());
 }
