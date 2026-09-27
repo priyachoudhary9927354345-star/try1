@@ -408,6 +408,16 @@
   .dream-summary strong { color: var(--ink); font-weight: 600; }
   .dream-preview { position: sticky; top: 6rem; }
   @media (max-width: 900px) { .dream-preview { position: static; } }
+  .realistic-actions { display: flex; justify-content: center; margin-top: 1rem; }
+  .realistic-overlay { position: absolute; inset: 0; border-radius: 16px; overflow: hidden; background: #0d0d10; }
+  .realistic-overlay img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .realistic-loading {
+    position: absolute; inset: 0; z-index: 4; border-radius: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;
+    background: rgba(13,13,16,0.94); color: var(--ink-dim); font-size: 0.85rem; text-align: center; padding: 1rem;
+  }
+  .spinner { width: 34px; height: 34px; border-radius: 999px; border: 3px solid rgba(212,175,106,0.25); border-top-color: var(--gold); animation: dreamspin 0.9s linear infinite; }
+  @keyframes dreamspin { to { transform: rotate(360deg); } }
 
   .genie-callout {
     display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
@@ -550,8 +560,23 @@
           </button>
         </div>
         <div class="dream-preview">
-          <div class="fp-viewport viewport-sky" id="dream-viewport" style="height:26rem;"><div class="fp-scene" id="dream-scene"></div></div>
-          <p class="fp-hint">Drag to rotate &bull; Scroll to zoom</p>
+          <div class="fp-viewport viewport-sky" id="dream-viewport" style="height:26rem;">
+            <div class="fp-scene" id="dream-scene"></div>
+            <div class="realistic-overlay" id="realistic-overlay" hidden>
+              <img id="realistic-img" alt="AI-generated photorealistic rendering of your dream home">
+            </div>
+            <div class="realistic-loading" id="realistic-loading" hidden>
+              <div class="spinner"></div>
+              <p>Rendering your dream home&hellip;</p>
+            </div>
+          </div>
+          <div class="realistic-actions">
+            <button type="button" class="btn btn-outline" id="realistic-toggle-btn" onclick="toggleRealisticPreview()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z"/></svg>
+              <span id="realistic-toggle-label">Generate Realistic Photo</span>
+            </button>
+          </div>
+          <p class="fp-hint" id="dream-fp-hint">Drag to rotate &bull; Scroll to zoom</p>
         </div>
       </div>
     </div>
@@ -1459,6 +1484,81 @@ const ADDON_OPTIONS = [
 let dream = { style:'villa', palette:'gold', stories:1, footprint:'medium', addons:['pool'] };
 let dreamOrbit = null;
 
+/* ---- Realistic (AI-generated) preview ---- */
+const REALISTIC_LIMIT = 3;
+const REALISTIC_COOLDOWN_MS = 15000;
+let realisticMode = false;
+let realisticBusy = false;
+let realisticLastAt = 0;
+let realisticImageData = null;
+let realisticConfigKey = null;
+
+function currentDreamConfigKey(){
+  return JSON.stringify({ style:dream.style, palette:dream.palette, footprint:dream.footprint, stories:dream.stories, addons:[...dream.addons].sort() });
+}
+function realisticGenCount(){
+  try { return parseInt(sessionStorage.getItem('aura-realistic-count') || '0', 10); } catch(e) { return 0; }
+}
+function realisticIncCount(){
+  try { sessionStorage.setItem('aura-realistic-count', String(realisticGenCount()+1)); } catch(e) {}
+}
+function setRealisticUiTo3D(){
+  realisticMode = false;
+  document.getElementById('realistic-overlay').hidden = true;
+  document.getElementById('realistic-toggle-label').textContent = 'Generate Realistic Photo';
+  document.getElementById('dream-fp-hint').textContent = 'Drag to rotate • Scroll to zoom';
+}
+function setRealisticUiToPhoto(){
+  realisticMode = true;
+  document.getElementById('realistic-img').src = realisticImageData;
+  document.getElementById('realistic-overlay').hidden = false;
+  document.getElementById('realistic-toggle-label').textContent = 'Back to 3D Model';
+  document.getElementById('dream-fp-hint').textContent = 'AI-generated preview — tweak the design to regenerate';
+}
+async function generateRealisticPhoto(configKey){
+  realisticBusy = true;
+  realisticLastAt = Date.now();
+  const loading = document.getElementById('realistic-loading');
+  const btn = document.getElementById('realistic-toggle-btn');
+  loading.hidden = false;
+  document.getElementById('realistic-overlay').hidden = true;
+  btn.disabled = true;
+  try {
+    const resp = await fetch('/api/generate-dream-home', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ style:dream.style, palette:dream.palette, footprint:dream.footprint, stories:dream.stories, addons:dream.addons }),
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok || !data.image) throw new Error(data.error || 'Generation failed');
+    realisticImageData = data.image;
+    realisticConfigKey = configKey;
+    realisticIncCount();
+    setRealisticUiToPhoto();
+  } catch (err) {
+    showToast('Could not generate a realistic photo right now. Please try again.');
+  } finally {
+    loading.hidden = true;
+    btn.disabled = false;
+    realisticBusy = false;
+  }
+}
+function toggleRealisticPreview(){
+  if (realisticBusy) return;
+  if (realisticMode) { setRealisticUiTo3D(); return; }
+  const key = currentDreamConfigKey();
+  if (realisticImageData && key === realisticConfigKey) { setRealisticUiToPhoto(); return; }
+  if (Date.now() - realisticLastAt < REALISTIC_COOLDOWN_MS) {
+    showToast('Please wait a few seconds before generating another photo.');
+    return;
+  }
+  if (realisticGenCount() >= REALISTIC_LIMIT) {
+    showToast(`You've used your ${REALISTIC_LIMIT} free realistic previews for this visit.`);
+    return;
+  }
+  generateRealisticPhoto(key);
+}
+
 function dreamSummary(){
   const styleLabel = STYLE_OPTIONS.find(o=>o.v===dream.style).l;
   const paletteLabel = PALETTE_OPTIONS.find(o=>o.v===dream.palette).l;
@@ -1486,6 +1586,10 @@ function renderDream(){
   document.getElementById('dream-summary').innerHTML = dreamSummary();
 
   buildHouseModel(dreamScene, dream);
+
+  if (realisticMode && currentDreamConfigKey() !== realisticConfigKey) {
+    setRealisticUiTo3D();
+  }
 }
 
 const dreamScene = document.getElementById('dream-scene');
