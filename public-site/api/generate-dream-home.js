@@ -39,14 +39,18 @@ function buildPrompt({ style, palette, footprint, stories, addons }) {
   );
 }
 
+const REPLICATE_MODEL = 'black-forest-labs/flux-schnell';
+const POLL_INTERVAL_MS = 1000;
+const POLL_TIMEOUT_MS = 55000;
+
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
+  const apiToken = process.env.REPLICATE_API_TOKEN;
+  if (!apiToken) {
     res.status(500).json({ error: 'Realistic previews are not configured yet.' });
     return;
   }
@@ -55,36 +59,61 @@ module.exports = async (req, res) => {
   const prompt = buildPrompt(body);
 
   try {
-    const openaiResp = await fetch('https://api.openai.com/v1/images/generations', {
+    const createResp = await fetch(`https://api.replicate.com/v1/models/${REPLICATE_MODEL}/predictions`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiToken}`,
         'Content-Type': 'application/json',
+        Prefer: 'wait',
       },
       body: JSON.stringify({
-        model: 'gpt-image-1',
-        prompt,
-        size: '1024x1024',
-        quality: 'medium',
-        n: 1,
+        input: {
+          prompt,
+          aspect_ratio: '1:1',
+          num_outputs: 1,
+          output_format: 'jpg',
+          output_quality: 85,
+        },
       }),
     });
 
-    if (!openaiResp.ok) {
-      const errText = await openaiResp.text();
-      console.error('OpenAI image API error:', errText);
+    if (!createResp.ok) {
+      const errText = await createResp.text();
+      console.error('Replicate API error:', errText);
       res.status(502).json({ error: 'Image generation failed. Please try again.' });
       return;
     }
 
-    const data = await openaiResp.json();
-    const b64 = data && data.data && data.data[0] && data.data[0].b64_json;
-    if (!b64) {
+    let prediction = await createResp.json();
+    const startedAt = Date.now();
+
+    while (
+      prediction.status !== 'succeeded' &&
+      prediction.status !== 'failed' &&
+      prediction.status !== 'canceled' &&
+      Date.now() - startedAt < POLL_TIMEOUT_MS
+    ) {
+      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+      const pollResp = await fetch(prediction.urls.get, {
+        headers: { Authorization: `Bearer ${apiToken}` },
+      });
+      prediction = await pollResp.json();
+    }
+
+    if (prediction.status !== 'succeeded') {
+      console.error('Replicate prediction did not succeed:', prediction.status, prediction.error);
+      res.status(502).json({ error: 'Image generation timed out. Please try again.' });
+      return;
+    }
+
+    const output = prediction.output;
+    const imageUrl = Array.isArray(output) ? output[0] : output;
+    if (!imageUrl) {
       res.status(502).json({ error: 'No image was returned. Please try again.' });
       return;
     }
 
-    res.status(200).json({ image: `data:image/png;base64,${b64}` });
+    res.status(200).json({ image: imageUrl });
   } catch (err) {
     console.error('Dream home generation error:', err);
     res.status(500).json({ error: 'Something went wrong generating your dream home.' });
